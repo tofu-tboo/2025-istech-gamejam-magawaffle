@@ -114,16 +114,10 @@ public class Character : MonoBehaviour
             
             if (Input.GetKeyDown(dieKey))
             {
-                // 1순위: 배양기(Capsule)에 닿아있는가?
+                AttemptRePossession();
                 if (currentCapsule != null)
                 {
-                    // 배양기에 닿아있으면, GameManager에 새 Body 스폰 및 빙의 요청
                     GameManager.Instance.SpawnAndPossessBody(currentCapsule.position);
-                }
-                else
-                {
-                    // 2순위: (배양기에 닿지 않았으면) 근처의 'undead' Body에 재빙의 시도
-                    AttemptRePossession();
                 }
             }
         }
