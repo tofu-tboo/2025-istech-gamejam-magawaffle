@@ -29,7 +29,7 @@ Transform:
   m_GameObject: {fileID: 2063543124342652166}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -4.782739, y: -1.2134478, z: -0.13673702}
+  m_LocalPosition: {x: 0.2, y: -1.2, z: 0}
   m_LocalScale: {x: 0.325, y: 0.59999996, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -98,8 +98,8 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2063543124342652166}
-  m_BodyType: 0
-  m_Simulated: 1
+  m_BodyType: 1
+  m_Simulated: 0
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
@@ -124,7 +124,7 @@ HingeJoint2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2063543124342652166}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 4
   m_EnableCollision: 0
   m_ConnectedRigidBody: {fileID: 6515684433076542225}
@@ -133,7 +133,7 @@ HingeJoint2D:
   m_BreakAction: 3
   m_AutoConfigureConnectedAnchor: 1
   m_Anchor: {x: 0, y: 0.4}
-  m_ConnectedAnchor: {x: 0.30000028, y: -0.47999993}
+  m_ConnectedAnchor: {x: 0.30769232, y: -0.4620696}
   m_UseConnectedAnchor: 1
   m_UseMotor: 0
   m_Motor:
@@ -141,8 +141,8 @@ HingeJoint2D:
     m_MaximumMotorForce: 10000
   m_UseLimits: 1
   m_AngleLimits:
-    m_LowerAngle: -45
-    m_UpperAngle: 60
+    m_LowerAngle: -120
+    m_UpperAngle: 120
 --- !u!61 &961755165670185815
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -150,7 +150,7 @@ BoxCollider2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2063543124342652166}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_Density: 1
   m_Material: {fileID: 0}
@@ -218,7 +218,7 @@ Transform:
   m_GameObject: {fileID: 2335308363217667588}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -5.1727395, y: -1.2134478, z: -0.13673702}
+  m_LocalPosition: {x: -0.2, y: -1.2, z: 0}
   m_LocalScale: {x: 0.325, y: 0.6, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -287,8 +287,8 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2335308363217667588}
-  m_BodyType: 0
-  m_Simulated: 1
+  m_BodyType: 1
+  m_Simulated: 0
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
@@ -313,7 +313,7 @@ HingeJoint2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2335308363217667588}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 4
   m_EnableCollision: 0
   m_ConnectedRigidBody: {fileID: 6515684433076542225}
@@ -322,7 +322,7 @@ HingeJoint2D:
   m_BreakAction: 3
   m_AutoConfigureConnectedAnchor: 1
   m_Anchor: {x: 0, y: 0.4}
-  m_ConnectedAnchor: {x: -0.30000028, y: -0.47999993}
+  m_ConnectedAnchor: {x: -0.30769232, y: -0.4620696}
   m_UseConnectedAnchor: 1
   m_UseMotor: 0
   m_Motor:
@@ -330,8 +330,8 @@ HingeJoint2D:
     m_MaximumMotorForce: 10000
   m_UseLimits: 1
   m_AngleLimits:
-    m_LowerAngle: -45
-    m_UpperAngle: 60
+    m_LowerAngle: -120
+    m_UpperAngle: 120
 --- !u!61 &3477182096906006833
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -339,7 +339,7 @@ BoxCollider2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2335308363217667588}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_Density: 1
   m_Material: {fileID: 0}
@@ -387,6 +387,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6487429746097515070}
+  - component: {fileID: 8640251741921399876}
+  - component: {fileID: 8163360860505815318}
   m_Layer: 8
   m_Name: Body
   m_TagString: Untagged
@@ -403,7 +405,7 @@ Transform:
   m_GameObject: {fileID: 2931548549655608792}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.022260886, y: 1.4743527, z: 0.13673702}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -420,6 +422,53 @@ Transform:
   - {fileID: 8010690233032525816}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8640251741921399876
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2931548549655608792}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6998755dcddde6048be15a5779146d01, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _state: 0
+  animator: {fileID: 8163360860505815318}
+  locomotionStateName: Walk
+  autoPlayAnimatorState: 1
+  locomotionBody: {fileID: 0}
+  ragdollGravityScale: 1
+  ragdollLinearDrag: 0
+  ragdollAngularDrag: 0.05
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  groundCheck: {fileID: 0}
+  groundCheckDistance: 0.1
+--- !u!95 &8163360860505815318
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2931548549655608792}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 4bbf7c003f5d42eea3f9c40cf4d00db7, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &3277463480732122182
 GameObject:
   m_ObjectHideFlags: 0
@@ -449,7 +498,7 @@ Transform:
   m_GameObject: {fileID: 3277463480732122182}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -4.9777393, y: 0.07205212, z: -0.13673702}
+  m_LocalPosition: {x: 0, y: 0.07205212, z: 0}
   m_LocalScale: {x: 0.78000003, y: 0.90000004, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -517,7 +566,7 @@ BoxCollider2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3277463480732122182}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_Density: 1
   m_Material: {fileID: 0}
@@ -564,8 +613,8 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3277463480732122182}
-  m_BodyType: 0
-  m_Simulated: 1
+  m_BodyType: 1
+  m_Simulated: 0
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
@@ -590,7 +639,7 @@ HingeJoint2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3277463480732122182}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 4
   m_EnableCollision: 0
   m_ConnectedRigidBody: {fileID: 6515684433076542225}
@@ -607,8 +656,8 @@ HingeJoint2D:
     m_MaximumMotorForce: 10000
   m_UseLimits: 1
   m_AngleLimits:
-    m_LowerAngle: -12
-    m_UpperAngle: 12
+    m_LowerAngle: -100
+    m_UpperAngle: 100
 --- !u!1 &3323339611492925858
 GameObject:
   m_ObjectHideFlags: 0
@@ -637,7 +686,7 @@ Transform:
   m_GameObject: {fileID: 3323339611492925858}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -4.9777393, y: -0.61344784, z: -0.13673702}
+  m_LocalPosition: {x: 0, y: -0.61344784, z: 0}
   m_LocalScale: {x: 0.65, y: 0.75, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -706,8 +755,8 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3323339611492925858}
-  m_BodyType: 0
-  m_Simulated: 1
+  m_BodyType: 1
+  m_Simulated: 0
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
@@ -732,7 +781,7 @@ BoxCollider2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3323339611492925858}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_Density: 1
   m_Material: {fileID: 0}
@@ -800,7 +849,7 @@ Transform:
   m_GameObject: {fileID: 3688137548190695564}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: 0.7071068, w: 0.7071068}
-  m_LocalPosition: {x: -4.0105395, y: 0.43205225, z: -0.13673702}
+  m_LocalPosition: {x: 0.9, y: 0.44, z: 0}
   m_LocalScale: {x: 0.22680007, y: 0.5616001, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -869,8 +918,8 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3688137548190695564}
-  m_BodyType: 0
-  m_Simulated: 1
+  m_BodyType: 1
+  m_Simulated: 0
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
@@ -895,7 +944,7 @@ HingeJoint2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3688137548190695564}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 4
   m_EnableCollision: 0
   m_ConnectedRigidBody: {fileID: 3042945946398656682}
@@ -904,7 +953,7 @@ HingeJoint2D:
   m_BreakAction: 3
   m_AutoConfigureConnectedAnchor: 1
   m_Anchor: {x: 0, y: 0.4}
-  m_ConnectedAnchor: {x: -0.000000031821862, y: -0.41999957}
+  m_ConnectedAnchor: {x: -0.000000028389708, y: -0.37470043}
   m_UseConnectedAnchor: 1
   m_UseMotor: 0
   m_Motor:
@@ -912,8 +961,8 @@ HingeJoint2D:
     m_MaximumMotorForce: 10000
   m_UseLimits: 1
   m_AngleLimits:
-    m_LowerAngle: 0
-    m_UpperAngle: 135
+    m_LowerAngle: -150
+    m_UpperAngle: 150
 --- !u!61 &7940498355159655850
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -921,7 +970,7 @@ BoxCollider2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3688137548190695564}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_Density: 1
   m_Material: {fileID: 0}
@@ -989,7 +1038,7 @@ Transform:
   m_GameObject: {fileID: 4553034206502442294}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -5.1727395, y: -1.6634479, z: -0.13673702}
+  m_LocalPosition: {x: -0.2, y: -1.68, z: 0}
   m_LocalScale: {x: 0.27299997, y: 0.525, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1058,8 +1107,8 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4553034206502442294}
-  m_BodyType: 0
-  m_Simulated: 1
+  m_BodyType: 1
+  m_Simulated: 0
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
@@ -1084,7 +1133,7 @@ HingeJoint2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4553034206502442294}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 4
   m_EnableCollision: 0
   m_ConnectedRigidBody: {fileID: 1352328408420931559}
@@ -1101,8 +1150,8 @@ HingeJoint2D:
     m_MaximumMotorForce: 10000
   m_UseLimits: 1
   m_AngleLimits:
-    m_LowerAngle: 0
-    m_UpperAngle: 130
+    m_LowerAngle: -120
+    m_UpperAngle: 120
 --- !u!61 &2382608199176403497
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -1110,7 +1159,7 @@ BoxCollider2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4553034206502442294}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_Density: 1
   m_Material: {fileID: 0}
@@ -1178,7 +1227,7 @@ Transform:
   m_GameObject: {fileID: 5201326917774385544}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -4.782739, y: -1.6634479, z: -0.13673702}
+  m_LocalPosition: {x: 0.2, y: -1.68, z: 0}
   m_LocalScale: {x: 0.273, y: 0.525, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1247,8 +1296,8 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5201326917774385544}
-  m_BodyType: 0
-  m_Simulated: 1
+  m_BodyType: 1
+  m_Simulated: 0
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
@@ -1273,7 +1322,7 @@ HingeJoint2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5201326917774385544}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 4
   m_EnableCollision: 0
   m_ConnectedRigidBody: {fileID: 7696391936478140711}
@@ -1290,8 +1339,8 @@ HingeJoint2D:
     m_MaximumMotorForce: 10000
   m_UseLimits: 1
   m_AngleLimits:
-    m_LowerAngle: 0
-    m_UpperAngle: 130
+    m_LowerAngle: -120
+    m_UpperAngle: 120
 --- !u!61 &2662699737701351289
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -1299,7 +1348,7 @@ BoxCollider2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5201326917774385544}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_Density: 1
   m_Material: {fileID: 0}
@@ -1367,7 +1416,7 @@ Transform:
   m_GameObject: {fileID: 5726305509153235226}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0.7071068, w: 0.7071068}
-  m_LocalPosition: {x: -5.944939, y: 0.43205225, z: -0.13673702}
+  m_LocalPosition: {x: -0.9, y: 0.44, z: 0}
   m_LocalScale: {x: 0.22680007, y: 0.5616001, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1436,8 +1485,8 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5726305509153235226}
-  m_BodyType: 0
-  m_Simulated: 1
+  m_BodyType: 1
+  m_Simulated: 0
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
@@ -1462,7 +1511,7 @@ HingeJoint2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5726305509153235226}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 4
   m_EnableCollision: 0
   m_ConnectedRigidBody: {fileID: 5774415942718992961}
@@ -1479,8 +1528,8 @@ HingeJoint2D:
     m_MaximumMotorForce: 10000
   m_UseLimits: 1
   m_AngleLimits:
-    m_LowerAngle: 0
-    m_UpperAngle: 135
+    m_LowerAngle: -150
+    m_UpperAngle: 150
 --- !u!61 &7208860829248132313
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -1488,7 +1537,7 @@ BoxCollider2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5726305509153235226}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_Density: 1
   m_Material: {fileID: 0}
@@ -1556,7 +1605,7 @@ Transform:
   m_GameObject: {fileID: 5886463408681810544}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: 0.7071068, w: 0.7071068}
-  m_LocalPosition: {x: -4.4317393, y: 0.43205225, z: -0.13673702}
+  m_LocalPosition: {x: 0.5, y: 0.44, z: 0}
   m_LocalScale: {x: 0.27000007, y: 0.46800014, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1625,8 +1674,8 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5886463408681810544}
-  m_BodyType: 0
-  m_Simulated: 1
+  m_BodyType: 1
+  m_Simulated: 0
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
@@ -1651,7 +1700,7 @@ HingeJoint2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5886463408681810544}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 4
   m_EnableCollision: 0
   m_ConnectedRigidBody: {fileID: 2996209677056837475}
@@ -1666,7 +1715,7 @@ HingeJoint2D:
   m_Motor:
     m_MotorSpeed: 0
     m_MaximumMotorForce: 10000
-  m_UseLimits: 1
+  m_UseLimits: 0
   m_AngleLimits:
     m_LowerAngle: -90
     m_UpperAngle: 90
@@ -1677,7 +1726,7 @@ BoxCollider2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5886463408681810544}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_Density: 1
   m_Material: {fileID: 0}
@@ -1745,7 +1794,7 @@ Transform:
   m_GameObject: {fileID: 7360220954331313870}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0.7071068, w: 0.7071068}
-  m_LocalPosition: {x: -5.5237393, y: 0.43205225, z: -0.13673702}
+  m_LocalPosition: {x: -0.5, y: 0.44, z: 0}
   m_LocalScale: {x: 0.27000007, y: 0.46800014, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1814,8 +1863,8 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7360220954331313870}
-  m_BodyType: 0
-  m_Simulated: 1
+  m_BodyType: 1
+  m_Simulated: 0
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
@@ -1840,7 +1889,7 @@ HingeJoint2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7360220954331313870}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 4
   m_EnableCollision: 0
   m_ConnectedRigidBody: {fileID: 2996209677056837475}
@@ -1855,7 +1904,7 @@ HingeJoint2D:
   m_Motor:
     m_MotorSpeed: 0
     m_MaximumMotorForce: 10000
-  m_UseLimits: 1
+  m_UseLimits: 0
   m_AngleLimits:
     m_LowerAngle: -90
     m_UpperAngle: 90
@@ -1866,7 +1915,7 @@ BoxCollider2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7360220954331313870}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_Density: 1
   m_Material: {fileID: 0}
@@ -1933,7 +1982,7 @@ Transform:
   m_GameObject: {fileID: 8197758163954992154}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -4.9777393, y: 0.81155217, z: -0.13673702}
+  m_LocalPosition: {x: 0, y: 0.8, z: 0}
   m_LocalScale: {x: 0.78000003, y: 0.67499995, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2002,8 +2051,8 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8197758163954992154}
-  m_BodyType: 0
-  m_Simulated: 1
+  m_BodyType: 1
+  m_Simulated: 0
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
@@ -2028,7 +2077,7 @@ HingeJoint2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8197758163954992154}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 4
   m_EnableCollision: 0
   m_ConnectedRigidBody: {fileID: 2996209677056837475}
@@ -2037,7 +2086,7 @@ HingeJoint2D:
   m_BreakAction: 3
   m_AutoConfigureConnectedAnchor: 1
   m_Anchor: {x: 0, y: -0.4}
-  m_ConnectedAnchor: {x: 0, y: 0.5216667}
+  m_ConnectedAnchor: {x: 0, y: 0.50883096}
   m_UseConnectedAnchor: 1
   m_UseMotor: 1
   m_Motor:
@@ -2045,5 +2094,5 @@ HingeJoint2D:
     m_MaximumMotorForce: 10000
   m_UseLimits: 1
   m_AngleLimits:
-    m_LowerAngle: -20
-    m_UpperAngle: 20
+    m_LowerAngle: -60
+    m_UpperAngle: 60

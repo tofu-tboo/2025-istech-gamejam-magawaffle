@@ -22,6 +22,8 @@ public class GameManager : MonoBehaviour
 
     // 씬에 생성된 모든 'Body'들을 추적하는 리스트
     private List<GameObject> activeBodies = new List<GameObject>();
+    [SerializeField] private string bodyLayerName = "Body";
+    private int _bodyLayerMask = ~0;
 
     void Awake()
     {
@@ -30,6 +32,7 @@ public class GameManager : MonoBehaviour
         {
             Instance = this;
             DontDestroyOnLoad(gameObject); // 씬이 바뀌어도 유지
+            CacheLayerMask();
         }
         else
         {
@@ -55,6 +58,16 @@ public class GameManager : MonoBehaviour
         if (Input.GetKeyDown(resurrectKey) && playerSoul.state == CharacterState.ghost)
         {
             HandleResurrection();
+        }
+    }
+
+    private void CacheLayerMask()
+    {
+        var layerIndex = LayerMask.NameToLayer(bodyLayerName);
+        _bodyLayerMask = layerIndex < 0 ? Physics2D.AllLayers : (1 << layerIndex);
+        if (layerIndex < 0)
+        {
+            Debug.LogWarning($"Layer '{bodyLayerName}' not found. Using all layers for overlap queries.");
         }
     }
 
@@ -132,22 +145,22 @@ public class GameManager : MonoBehaviour
     }
 
     // --- Button 기믹 컨트롤 로직 ---
-    
+
     public void OnButtonEvent(string buttonID, bool isActive)
     {
         Debug.Log($"GameManager: ButtonID '{buttonID}' 이벤트 수신. 상태: {isActive}");
 
         switch (buttonID)
         {
-            case "OpenMainDoor": 
+            case "OpenMainDoor":
                 if (mainDoor != null)
                 {
                     if (isActive) mainDoor.Open();
                     else mainDoor.Close();
                 }
                 break;
-            
-            case "ActivateTrapBridge": 
+
+            case "ActivateTrapBridge":
                 if (trapBridge != null)
                 {
                     trapBridge.SetActive(isActive);
@@ -158,5 +171,40 @@ public class GameManager : MonoBehaviour
                 Debug.LogWarning($"GameManager: 처리되지 않은 buttonID '{buttonID}' 입니다.");
                 break;
         }
+    }
+    
+    public List<Body> GetOverlapped(Vector2 globalPosition, float range, bool multi = false)
+    {
+        var circleHits = Physics2D.OverlapCircleAll(globalPosition, range, _bodyLayerMask);
+        var results = new List<Body>(multi ? circleHits.Length : 1);
+        float closestSqrDist = float.MaxValue;
+        Body closest = null;
+
+        foreach (var hit in circleHits)
+        {
+            if (hit != null)
+            {
+                if (multi)
+                {
+                    results.Add(hit.gameObject.GetComponent<Body>());
+                }
+                else
+                {
+                    var sqrDist = ((Vector2)hit.transform.position - globalPosition).sqrMagnitude;
+                    if (sqrDist < closestSqrDist)
+                    {
+                        closestSqrDist = sqrDist;
+                        closest = hit.gameObject.GetComponent<Body>();
+                    }
+                }
+            }
+        }
+
+        if (!multi && closest != null)
+        {
+            results.Add(closest);
+        }
+
+        return results;
     }
 }

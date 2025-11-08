@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public enum BodyState
@@ -11,15 +12,38 @@ public enum BodyState
 [RequireComponent(typeof(Collider2D))]
 public class Body : MonoBehaviour
 {
-    public BodyState state = BodyState.playing;
+    [SerializeField] private BodyState _state = BodyState.playing;
+    public BodyState state
+    {
+        get => _state;
+        set
+        {
+            if (_state == value) return;
+            _state = value;
+            ApplyState(value);
+        }
+    }
 
+    [Header("Animation")]
+    [SerializeField] private Animator animator;
+    [SerializeField] private string locomotionStateName = "Walk";
+    [SerializeField] private bool autoPlayAnimatorState = true;
+
+    [Header("Gameplay References")]
+    [SerializeField] private Rigidbody2D locomotionBody;
+    // [SerializeField] private MonoBehaviour[] gameplayBehaviours;
+
+    [Header("Ragdoll Physics Settings")]
+    [SerializeField] private float ragdollGravityScale = 1f;
+    [SerializeField] private float ragdollLinearDrag = 0f;
+    [SerializeField] private float ragdollAngularDrag = 0.05f;
+
+    private readonly List<Rigidbody2D> _ragdollBodies = new();
+    private readonly List<Collider2D> _ragdollColliders = new();
+    private readonly List<Joint2D> _ragdollJoints = new();
+    private readonly HashSet<Rigidbody2D> _bodyLookup = new();
+    private BodyState _appliedState = (BodyState)(-1);
     [Header("Movement Settings")]
-    public float maxSpeed = 3f;
-    public float acclerationForce = 100f; 
-
-    [Header("Jump Settings")]
-    public float jumpForce = 20f;
-    [SerializeField] private float gravityScale = 3f;
 
     [Header("Layer Settings")]
     [SerializeField] private LayerMask groundLayer;
@@ -31,30 +55,158 @@ public class Body : MonoBehaviour
     
     public Rigidbody2D Rb => rb; // Character가 Rigidbody에 접근 가능
 
-    void Awake()
+
+    private void Awake()
     {
-        rb = GetComponent<Rigidbody2D>();
-        rb.gravityScale = gravityScale; 
+        CacheReferences();
+        ApplyState(_state, true);
     }
 
-    void FixedUpdate()
+    private void OnValidate()
     {
-        // Body는 오직 Raycast만 실행하고, 자신의 중력 설정만 유지합니다.
-        CheckGround();
-        
-        if (state == BodyState.playing)
+        CacheReferences();
+        ApplyState(_state, true);
+    }
+
+    private void Update()
+    {
+        ApplyState(_state);
+    }
+
+    private void CacheReferences()
+    {
+        if (animator == null)
         {
-            rb.gravityScale = gravityScale;
+            animator = GetComponentInChildren<Animator>(true);
         }
-        else if (state == BodyState.undead || state == BodyState.dead)
+
+        if (locomotionBody == null)
         {
-            rb.gravityScale = gravityScale;
+            locomotionBody = GetComponent<Rigidbody2D>();
+        }
+
+        _ragdollBodies.Clear();
+        _ragdollColliders.Clear();
+        _ragdollJoints.Clear();
+        _bodyLookup.Clear();
+
+        // Assign Rigidbodies
+        var bodies = GetComponentsInChildren<Rigidbody2D>(true);
+        foreach (var body in bodies)
+        {
+            if (locomotionBody != null && body == locomotionBody)
+            {
+                continue;
+            }
+
+            _ragdollBodies.Add(body);
+            _bodyLookup.Add(body);
+        }
+
+        // Assign Colliders
+        foreach (var collider in GetComponentsInChildren<Collider2D>(true))
+        {
+            if (collider.attachedRigidbody != null && _bodyLookup.Contains(collider.attachedRigidbody))
+            {
+                _ragdollColliders.Add(collider);
+            }
+        }
+
+        // Assign Joints
+        foreach (var joint in GetComponentsInChildren<Joint2D>(true))
+        {
+            if (joint.attachedRigidbody != null && _bodyLookup.Contains(joint.attachedRigidbody))
+            {
+                _ragdollJoints.Add(joint);
+            }
         }
     }
 
-    /// <summary>
-    /// Raycast를 실행하고 지면 체크 결과를 내부 변수에 저장합니다.
-    /// </summary>
+    public void ApplyState(BodyState nextState, bool force = false) // 이 함수를 통해서 애니메이션 및 Ragdoll 물리가 제어됨
+    {
+        if (!force && nextState == _appliedState) // No 중복
+        {
+            return;
+        }
+
+        _appliedState = nextState;
+        var isPlaying = nextState == BodyState.playing;
+
+        ToggleSystems(isPlaying);
+        ToggleRagdoll(!isPlaying);
+    }
+
+    private void ToggleSystems(bool enable)
+    {
+        // Animator
+        if (animator != null)
+        {
+            animator.enabled = enable;
+
+            if (enable && autoPlayAnimatorState && !string.IsNullOrEmpty(locomotionStateName))
+            {
+                Debug.Log(animator);
+                animator.Play(locomotionStateName, 0, 0f);
+            }
+        }
+
+        // LocomotionBody
+        if (locomotionBody != null)
+        {
+            // 이동 시에는 물리 적용 X
+            locomotionBody.simulated = enable;
+            if (!enable)
+            {
+                locomotionBody.linearVelocity = Vector2.zero;
+                locomotionBody.angularVelocity = 0f;
+            }
+        }
+
+        // // Etc
+        // if (gameplayBehaviours != null)
+        // {
+        //     foreach (var behaviour in gameplayBehaviours)
+        //     {
+        //         if (behaviour != null)
+        //         {
+        //             behaviour.enabled = enable;
+        //         }
+        //     }
+        // }
+    }
+
+    private void ToggleRagdoll(bool enable) // enable 여부에 따라서 흐느적거림 조정.
+    {
+        foreach (var body in _ragdollBodies)
+        {
+            if (enable) // Dynamic => 흐느적거림
+            {
+                body.bodyType = RigidbodyType2D.Dynamic;
+                body.gravityScale = ragdollGravityScale;
+                body.linearDamping = ragdollLinearDrag;
+                body.angularDamping = ragdollAngularDrag;
+                body.simulated = true;
+            }
+            else // Kinematic => Animation으로만 제어
+            {
+                body.linearVelocity = Vector2.zero;
+                body.angularVelocity = 0f;
+                body.bodyType = RigidbodyType2D.Kinematic;
+                body.simulated = false;
+            }
+        }
+
+        foreach (var joint in _ragdollJoints)
+        {
+            joint.enabled = enable;
+        }
+
+        foreach (var collider in _ragdollColliders)
+        {
+            collider.enabled = enable;
+        }
+    }
+
     void CheckGround()
     {
         RaycastHit2D hit = Physics2D.Raycast(
