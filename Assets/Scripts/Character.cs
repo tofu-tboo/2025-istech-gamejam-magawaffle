@@ -3,12 +3,12 @@ using System.Collections.Generic;
 
 public enum CharacterState
 {
-    moving, // '육체'에 빙의 중 (Body가 Player 레이어)
-    ghost   // '유령' 상태 (Character가 Ghost 레이어)
+    moving, 
+    ghost   
 }
 
-[RequireComponent(typeof(Rigidbody2D))] // 유령 모드용 Rigidbody
-[RequireComponent(typeof(Collider2D))]  // 유령 모드용 Collider
+[RequireComponent(typeof(Rigidbody2D))] 
+[RequireComponent(typeof(Collider2D))]  
 public class Character : MonoBehaviour
 {
     [Header("Key Settings")]
@@ -28,6 +28,7 @@ public class Character : MonoBehaviour
     private Collider2D col; 
 
     private Vector2 movingDirection;
+    private bool jumpRequested; // 점프 요청 변수를 Character가 가집니다.
     
     public CharacterState state = CharacterState.ghost; 
 
@@ -35,10 +36,15 @@ public class Character : MonoBehaviour
     private int playerLayerIndex;
     private int ghostLayerIndex;
     private int bodyLayerIndex; 
-
-    // 'undead' 상태의 재빙의 가능 Body 리스트
-    private List<Body> nearbyBodies = new List<Body>();
     
+    // [핵심] Body의 Rigidbody와 Movement 설정값을 Character가 캐시합니다.
+    private Rigidbody2D bodyRb;
+    private float maxSpeedCache;
+    private float acclerationForceCache;
+    private float jumpForceCache;
+
+    private List<Body> nearbyBodies = new List<Body>();
+
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -47,7 +53,6 @@ public class Character : MonoBehaviour
         
         DontDestroyOnLoad(gameObject);
         
-        // 유니티 에디터에서 "Player", "Body", "Ghost" 레이어를 만들어야 합니다.
         playerLayerIndex = LayerMask.NameToLayer("Player");
         bodyLayerIndex = LayerMask.NameToLayer("Body"); 
         ghostLayerIndex = LayerMask.NameToLayer("Ghost");
@@ -59,42 +64,31 @@ public class Character : MonoBehaviour
     {
         // --- 입력 감지 ---
         movingDirection = Vector2.zero;
-
-        if (state == CharacterState.moving) // '빙의' 상태일 때
+        // Update에서 점프 요청을 받고 FixedUpdate에서 실행하므로, 매 프레임 초기화
+        // FixedUpdate에서 실행될 때까지 이 값을 유지해야 하므로, 점프 키 입력시에만 true로 설정합니다.
+        
+        if (state == CharacterState.moving)
         {
             if (Input.GetKey(leftKey)) movingDirection += Vector2.left;
             if (Input.GetKey(rightKey)) movingDirection += Vector2.right;
 
-            // 점프 (Body에게 명령)
+            // [NEW] 점프 입력 시 요청 변수를 true로 설정 (FixedUpdate에서 실행)
             if (Input.GetKeyDown(jumpKey))
             {
-                if (currentBody != null) currentBody.RequestJump();
+                jumpRequested = true;
             }
 
-            // '빙의 해제' (Q) -> undead (재빙의 가능)
-            if (Input.GetKeyDown(dieKey))
-            {
-                ReleaseBody(); 
-            }
-            
-            // '육체 버리기' (E) -> dead (재빙의 불가능 + 새 Body 스폰)
-            if (Input.GetKeyDown(killKey))
-            {
-                KillCurrentBody();
-            }
+            if (Input.GetKeyDown(dieKey)) ReleaseBody(); 
+            if (Input.GetKeyDown(killKey)) KillCurrentBody();
         }
-        else if (state == CharacterState.ghost) // '유령' 상태일 때
+        else if (state == CharacterState.ghost)
         {
             if (Input.GetKey(leftKey)) movingDirection += Vector2.left;
             if (Input.GetKey(rightKey)) movingDirection += Vector2.right;
             if (Input.GetKey(upKey)) movingDirection += Vector2.up;
             if (Input.GetKey(downKey)) movingDirection += Vector2.down;
-
-            // '재빙의' 시도 (Q)
-            if (Input.GetKeyDown(dieKey))
-            {
-                AttemptRePossession();
-            }
+            
+            if (Input.GetKeyDown(dieKey)) AttemptRePossession();
         }
     }
 
@@ -102,10 +96,28 @@ public class Character : MonoBehaviour
     {
         if (state == CharacterState.moving)
         {
-            if (currentBody != null)
+            if (currentBody != null && bodyRb != null)
             {
-                // Body에게 이동 명령 전달
-                currentBody.Move(movingDirection);
+                // [핵심] Body의 Rigidbody를 직접 조작합니다.
+                
+                // 1. 좌우 이동
+                bodyRb.AddForce(new Vector2(movingDirection.x * acclerationForceCache, 0f));
+                float clampedXVelocity = Mathf.Clamp(bodyRb.linearVelocity.x, -maxSpeedCache, maxSpeedCache);
+                bodyRb.linearVelocity = new Vector2(clampedXVelocity, bodyRb.linearVelocity.y);
+                
+                // 2. 점프 (지면 체크는 Body에게 요청)
+                if (jumpRequested && currentBody.IsGrounded())
+                {
+                    bodyRb.linearVelocity = new Vector2(bodyRb.linearVelocity.x, 0f); 
+                    bodyRb.AddForce(Vector2.up * jumpForceCache, ForceMode2D.Impulse);
+                    jumpRequested = false; // 점프 실행 후 요청 초기화
+                }
+                else if (jumpRequested && !currentBody.IsGrounded())
+                {
+                    // 공중에서는 점프가 불가능하므로 요청만 해제
+                    jumpRequested = false;
+                }
+
                 // 영혼의 위치를 Body에 동기화
                 rb.MovePosition(currentBody.transform.position);
             }
@@ -120,12 +132,18 @@ public class Character : MonoBehaviour
     // --- 상태 변경 함수들 ---
 
     /// <summary>
-    /// GameManager가 호출: 지정된 'Body'에 빙의합니다. Body를 'Player' 레이어로 전환합니다.
+    /// 빙의합니다. Body의 Rigidbody와 설정을 캐시하고, Body를 'Player' 레이어로 전환합니다.
     /// </summary>
     public void PossessBody(Body bodyToPossess)
     {
         currentBody = bodyToPossess;
         currentBody.state = BodyState.playing;
+        
+        // [핵심] Body의 Rigidbody와 설정값 캐시
+        bodyRb = currentBody.Rb; 
+        maxSpeedCache = currentBody.maxSpeed;
+        acclerationForceCache = currentBody.acclerationForce;
+        jumpForceCache = currentBody.jumpForce;
         
         // [레이어 전환] Body를 Player 레이어로 변경 (무한 점프 방지)
         currentBody.gameObject.layer = playerLayerIndex; 
@@ -137,6 +155,7 @@ public class Character : MonoBehaviour
         gameObject.layer = playerLayerIndex;
         transform.position = currentBody.transform.position;
         nearbyBodies.Clear();
+        jumpRequested = false; // 새 몸에 빙의 시 점프 요청 초기화
     }
 
     /// <summary>
@@ -147,9 +166,9 @@ public class Character : MonoBehaviour
         if (currentBody != null)
         {
             currentBody.state = BodyState.undead; 
-            // [레이어 전환] Body를 Body 레이어로 변경 (밟을 수 있는 발판화)
             currentBody.gameObject.layer = bodyLayerIndex; 
             currentBody = null;
+            bodyRb = null; // 캐시 해제
         }
         BecomeGhost();
     }
@@ -162,13 +181,12 @@ public class Character : MonoBehaviour
         if (currentBody != null)
         {
             currentBody.state = BodyState.dead; 
-            // [레이어 전환] Body를 Body 레이어로 변경 (밟을 수 있는 발판화)
             currentBody.gameObject.layer = bodyLayerIndex; 
             currentBody = null;
+            bodyRb = null; // 캐시 해제
         }
         BecomeGhost();
 
-        // GameManager에게 새 Body를 리스폰하라고 알림 (단 1회)
         if (GameManager.Instance != null)
         {
             GameManager.Instance.SpawnNewUndeadBody();

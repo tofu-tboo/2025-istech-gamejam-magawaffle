@@ -2,9 +2,9 @@ using UnityEngine;
 
 public enum BodyState
 {
-    playing, // 현재 플레이어가 빙의 중
-    undead,  // 플레이어가 떠난 '시체' 상태 (재빙의 가능)
-    dead     // 완전히 버려진 '시체' 상태 (재빙의 불가능)
+    playing, 
+    undead,  
+    dead     
 }
 
 [RequireComponent(typeof(Rigidbody2D))]
@@ -14,11 +14,11 @@ public class Body : MonoBehaviour
     public BodyState state = BodyState.playing;
 
     [Header("Movement Settings")]
-    [SerializeField] private float maxSpeed = 3f;
-    [SerializeField] private float acclerationForce = 100f;
+    public float maxSpeed = 3f;
+    public float acclerationForce = 100f; 
 
     [Header("Jump Settings")]
-    [SerializeField] private float jumpForce = 20f;
+    public float jumpForce = 20f;
     [SerializeField] private float gravityScale = 3f;
 
     [Header("Layer Settings")]
@@ -27,10 +27,9 @@ public class Body : MonoBehaviour
     [SerializeField] private float groundCheckDistance = 0.1f;
 
     private Rigidbody2D rb;
-
-    private Vector2 movingDirection;
-    private bool jumpRequested;
     private bool isGrounded;
+    
+    public Rigidbody2D Rb => rb; // Character가 Rigidbody에 접근 가능
 
     void Awake()
     {
@@ -40,65 +39,48 @@ public class Body : MonoBehaviour
 
     void FixedUpdate()
     {
+        // Body는 오직 Raycast만 실행하고, 자신의 중력 설정만 유지합니다.
         CheckGround();
-
+        
         if (state == BodyState.playing)
         {
             rb.gravityScale = gravityScale;
-
-            // 좌우 이동 (명령 실행)
-            rb.AddForce(new Vector2(movingDirection.x * acclerationForce, 0f));
-            float clampedXVelocity = Mathf.Clamp(rb.linearVelocity.x, -maxSpeed, maxSpeed);
-            rb.linearVelocity = new Vector2(clampedXVelocity, rb.linearVelocity.y);
-
-            // 점프 (명령 실행)
-            if (jumpRequested && isGrounded)
-            {
-                rb.linearVelocity = new Vector2(rb.linearVelocity.x, 0f); 
-                rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
-            }
         }
-        // [수정됨] 'undead' 또는 'dead' 상태일 때
         else if (state == BodyState.undead || state == BodyState.dead)
         {
-            // 두 상태 모두 조종은 불가능하지만,
-            // 물리 법칙(중력, 밀림)은 그대로 적용됩니다.
             rb.gravityScale = gravityScale;
         }
-
-        // 입력값 초기화
-        movingDirection = Vector2.zero;
-        jumpRequested = false;
     }
 
+    /// <summary>
+    /// Raycast를 실행하고 지면 체크 결과를 내부 변수에 저장합니다.
+    /// </summary>
     void CheckGround()
     {
-        // Raycast 결과를 바로 isGrounded에 대입합니다.
-        // 유니티 설정(Layer Collision Matrix)에서 자신과의 충돌이 꺼져있어야 합니다.
-        isGrounded = Physics2D.Raycast(
+        RaycastHit2D hit = Physics2D.Raycast(
             groundCheck.position, 
             Vector2.down, 
             groundCheckDistance, 
             groundLayer
         );
+        
+        if (hit.collider != null)
+        {
+            // 감지된 오브젝트가 Body 자기 자신이 아니라면 (무한 점프 방지)
+            isGrounded = hit.collider.gameObject != gameObject;
+        }
+        else
+        {
+            isGrounded = false;
+        }
         // Debug.DrawRay(groundCheck.position, Vector2.down * groundCheckDistance, isGrounded ? Color.green : Color.red);
     }
 
-    // --- '영혼(Character)'이 호출할 함수들 ---
-
-    public void Move(Vector2 direction)
+    /// <summary>
+    /// Character가 Body의 지면 상태를 외부에서 확인할 수 있도록 합니다.
+    /// </summary>
+    public bool IsGrounded()
     {
-        if (state == BodyState.playing)
-        {
-            movingDirection = direction;
-        }
-    }
-
-    public void RequestJump()
-    {
-        if (state == BodyState.playing)
-        {
-            jumpRequested = true;
-        }
+        return isGrounded;
     }
 }
