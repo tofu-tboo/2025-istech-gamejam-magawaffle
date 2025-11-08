@@ -188,7 +188,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 192
   groundCheck: {fileID: 3877572361136551385}
-  groundCheckDistance: 8.41
+  groundCheckDistance: 0.1
 --- !u!1 &7523157678783388974
 GameObject:
   m_ObjectHideFlags: 0
