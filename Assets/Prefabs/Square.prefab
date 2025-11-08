@@ -99,7 +99,7 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3307618680378231483}
-  m_BodyType: 0
+  m_BodyType: 1
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
@@ -186,9 +186,9 @@ MonoBehaviour:
   ragdollAngularDrag: 0.05
   groundLayer:
     serializedVersion: 2
-    m_Bits: 193
+    m_Bits: 192
   groundCheck: {fileID: 3877572361136551385}
-  groundCheckDistance: 0.1
+  groundCheckDistance: 8.41
 --- !u!1 &7523157678783388974
 GameObject:
   m_ObjectHideFlags: 0

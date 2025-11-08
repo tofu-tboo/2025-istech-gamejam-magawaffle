@@ -141,6 +141,20 @@ public class Body : MonoBehaviour
             return;
         }
 
+        // [핵심 수정]
+        // 상태가 'playing'이 되거나 'playing'에서 벗어날 때 (예: undead가 될 때),
+        // 'isGrounded' 값을 'false'로 초기화합니다.
+        // 이는 'isGrounded' 값이 갱신되지 않고(stale) 남아있어
+        // 공중 점프가 되는 버그를 방지합니다.
+        if (nextState == BodyState.playing || _appliedState == BodyState.playing)
+        {
+            isGrounded = false;
+            
+            // Character.cs가 jumpRequested를 true로 갖고 있을 수 있으므로,
+            // Character.cs의 PossessBody()에서 jumpRequested = false;는 필수입니다.
+            // (현재 코드에 이미 구현되어 있음)
+        }
+
         _appliedState = nextState;
         var isPlaying = nextState == BodyState.playing;
 
@@ -150,7 +164,6 @@ public class Body : MonoBehaviour
 
     private void ToggleSystems(bool enable)
     {
-        // Animator
         if (animator != null)
         {
             animator.enabled = enable;
@@ -158,7 +171,12 @@ public class Body : MonoBehaviour
             if (enable && autoPlayAnimatorState && !string.IsNullOrEmpty(locomotionStateName))
             {
                 Debug.Log(animator);
-                animator.Play(locomotionStateName, 0, 0f);
+                
+                // [수정] 게임이 실행 중(Playing)일 때만 애니메이터를 Play 합니다.
+                if (Application.isPlaying && animator.gameObject.activeInHierarchy)
+                {
+                    animator.Play(locomotionStateName, 0, 0f);
+                }
             }
         }
 
@@ -167,13 +185,7 @@ public class Body : MonoBehaviour
         {
             // [핵심 수정 3] 'playing' 상태(enable=true)일 때 Rigidbody를 활성화해야
             // Character가 제어할 수 있습니다.
-            locomotionBody.simulated = enable; 
-
-            if (!enable) // undead 또는 dead 상태일 때만 속도 초기화
-            {
-                locomotionBody.linearVelocity = Vector2.zero;
-                locomotionBody.angularVelocity = 0f;
-            }
+            locomotionBody.simulated = enable;
         }
 
         // // Etc
@@ -188,7 +200,7 @@ public class Body : MonoBehaviour
         if (enable) // Dynamic (undead/dead) => 흐느적거림
         {
             locomotionBody.bodyType = RigidbodyType2D.Dynamic;
-            locomotionBody.gravityScale = ragdollGravityScale;
+            // locomotionBody.gravityScale = ragdollGravityScale;
             locomotionBody.linearDamping = ragdollLinearDrag;
             locomotionBody.angularDamping = ragdollAngularDrag;
             
@@ -217,7 +229,7 @@ public class Body : MonoBehaviour
         if (enable) // Dynamic => 흐느적거림
         {
             body.bodyType = RigidbodyType2D.Dynamic;
-            body.gravityScale = ragdollGravityScale;
+            // body.gravityScale = ragdollGravityScale;
             body.linearDamping = ragdollLinearDrag;
             body.angularDamping = ragdollAngularDrag;
             body.simulated = true;
