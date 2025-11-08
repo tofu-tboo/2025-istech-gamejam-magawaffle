@@ -296,4 +296,32 @@ public class Body : MonoBehaviour
             child.gameObject.layer = newLayer;
         }
     }
+    
+    /// <summary>
+    /// 이 Body의 콜라이더가 다른 콜라이더와 부딪혔을 때 호출됩니다.
+    /// </summary>
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        // 'playing' 상태(조종 중)일 때만 장애물에 닿으면 죽습니다.
+        // (undead/dead 상태의 래그돌이 장애물에 닿는 것은 무시)
+        if (_appliedState != BodyState.playing)
+        {
+            return;
+        }
+
+        // 충돌한 오브젝트가 "Obstacle" 태그를 가졌는지 확인
+        if (collision.gameObject.CompareTag("Obstacle"))
+        {
+            Debug.Log("Body가 Obstacle과 충돌했습니다. 'dead' 상태가 됩니다.");
+            
+            // 'E' 키를 누른 것처럼 'dead' 상태로 변경
+            // 이 상태 변경은 즉시 ApplyState(dead)를 호출하여 래그돌로 만들고
+            // 레이어를 'Body'로 변경합니다.
+            this.state = BodyState.dead;
+        }
+    }
+
+
+
+
 }
