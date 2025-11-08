@@ -218,10 +218,10 @@ public class Character : MonoBehaviour
         }
         BecomeGhost();
 
-        if (GameManager.Instance != null)
+       /* if (GameManager.Instance != null)
         {
             GameManager.Instance.SpawnNewUndeadBody();
-        }
+        }*/
     }
     
     private void BecomeGhost()

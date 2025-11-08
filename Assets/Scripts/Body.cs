@@ -305,6 +305,29 @@ public class Body : MonoBehaviour
             // 레이어를 'Body'로 변경합니다.
             this.state = BodyState.dead;
         }
+        if (collision.gameObject.CompareTag("PistonPress"))
+        {
+            if (_state != BodyState.dead) // 살아있는 모든 상태
+            {
+                Debug.Log("Body가 PistonPress와 충돌. '소멸'합니다.");
+
+                // 1. Character(영혼)를 즉시 Ghost로 만듦
+                if (GameManager.Instance != null && GameManager.Instance.playerSoul != null)
+                {
+                    GameManager.Instance.playerSoul.HandleBodyDestruction();
+                }
+
+                // 2. 새 'undead' Body를 리스폰
+                if (GameManager.Instance != null)
+                {
+                    GameManager.Instance.SpawnNewUndeadBody();
+                }
+
+                // 3. 이 Body 오브젝트 파괴
+                Destroy(gameObject);
+            }
+            return;
+        }
     }
     private void OnTriggerEnter2D(Collider2D other)
     {
