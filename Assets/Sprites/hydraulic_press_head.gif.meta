@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: f5377a575cd2c9240876ae8522628340
+guid: 6b6519b1f112bc6458313ec3a2fa8f82
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 1547406243525252255
-    second: Isttechpress-Photoroom 1_0
+      213: -8472554445694798549
+    second: hydraulic_press_head_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,23 +100,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Isttechpress-Photoroom 1_0
+      name: hydraulic_press_head_0
       rect:
         serializedVersion: 2
-        x: 170
-        y: 113
-        width: 678
-        height: 610
+        x: 103
+        y: 101
+        width: 54
+        height: 88
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: f945b8ca7cd797510800000000000000
-      internalID: 1547406243525252255
+      spriteID: b2574340f907b6a80800000000000000
+      internalID: -8472554445694798549
       vertices: []
       indices: 
       edges: []
@@ -125,7 +125,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 071a547e3e28d814abafeb14021da1c3
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Isttechpress-Photoroom 1_0: 1547406243525252255
+      hydraulic_press_head_0: -8472554445694798549
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

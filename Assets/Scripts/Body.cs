@@ -3,14 +3,13 @@ using UnityEngine;
 
 public enum BodyState
 {
-    playing,
-    undead,
-    dead
+    playing, 
+    undead,  
+    dead     
 }
 
-/// <summary>
-/// Switches between animated gameplay mode and physics-driven ragdoll mode.
-/// </summary>
+[RequireComponent(typeof(Rigidbody2D))]
+[RequireComponent(typeof(Collider2D))]
 public class Body : MonoBehaviour
 {
     public BodyState state = BodyState.playing;
@@ -34,12 +33,18 @@ public class Body : MonoBehaviour
     private readonly List<Joint2D> _ragdollJoints = new();
     private readonly HashSet<Rigidbody2D> _bodyLookup = new();
     private BodyState _appliedState = (BodyState)(-1);
+    [Header("Movement Settings")]
 
-    private void Reset()
-    {
-        CacheReferences();
-        ApplyState(state, true);
-    }
+    [Header("Layer Settings")]
+    [SerializeField] private LayerMask groundLayer;
+    [SerializeField] private Transform groundCheck;
+    [SerializeField] private float groundCheckDistance = 0.1f;
+
+    private Rigidbody2D rb;
+    private bool isGrounded;
+    
+    public Rigidbody2D Rb => rb; // Character가 Rigidbody에 접근 가능
+
 
     private void Awake()
     {
@@ -189,5 +194,34 @@ public class Body : MonoBehaviour
         {
             collider.enabled = enable;
         }
+    }
+
+    void CheckGround()
+    {
+        RaycastHit2D hit = Physics2D.Raycast(
+            groundCheck.position, 
+            Vector2.down, 
+            groundCheckDistance, 
+            groundLayer
+        );
+        
+        if (hit.collider != null)
+        {
+            // 감지된 오브젝트가 Body 자기 자신이 아니라면 (무한 점프 방지)
+            isGrounded = hit.collider.gameObject != gameObject;
+        }
+        else
+        {
+            isGrounded = false;
+        }
+        // Debug.DrawRay(groundCheck.position, Vector2.down * groundCheckDistance, isGrounded ? Color.green : Color.red);
+    }
+
+    /// <summary>
+    /// Character가 Body의 지면 상태를 외부에서 확인할 수 있도록 합니다.
+    /// </summary>
+    public bool IsGrounded()
+    {
+        return isGrounded;
     }
 }
