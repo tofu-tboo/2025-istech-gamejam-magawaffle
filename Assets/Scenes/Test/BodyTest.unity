@@ -341,13 +341,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 10a182a83dd58de408e280b4071794f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerSoul: {fileID: 0}
-  bodyPrefab: {fileID: 0}
-  respawnPoint: {fileID: 0}
+  playerSoul: {fileID: 1783092188}
+  bodyPrefab: {fileID: 3307618680378231483, guid: cd65825aca8781c4d8d6b12f064fc320, type: 3}
+  respawnPoint: {fileID: 1317081929}
   resurrectKey: 114
   mainDoor: {fileID: 0}
   trapBridge: {fileID: 0}
-  bodyLayerName: Ragdoll
+  bodyLayerName: Body
 --- !u!4 &1552099981
 Transform:
   m_ObjectHideFlags: 0
@@ -494,7 +494,17 @@ MonoBehaviour:
   jumpKey: 32
   dieKey: 113
   killKey: 101
-  maxGhostSpeed: 5
+  findrange: 10
+  movetype: 1
+  maxSpeed: 3
+  acclerationForce: 100
+  instantSpeed: 3
+  gravityScale: 3
+  jumpForce: 20
+  ghostMoveType: 0
+  ghostMaxSpeed: 4
+  ghostAcclerationForce: 100
+  ghostInstantSpeed: 4
   state: 1
 --- !u!58 &1783092189
 CircleCollider2D:
@@ -545,7 +555,7 @@ Rigidbody2D:
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
-  m_LinearDamping: 0
+  m_LinearDamping: 5
   m_AngularDamping: 0.05
   m_GravityScale: 0
   m_Material: {fileID: 0}

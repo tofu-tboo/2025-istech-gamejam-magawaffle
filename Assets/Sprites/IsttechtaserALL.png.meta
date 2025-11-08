@@ -1,31 +1,25 @@
 fileFormatVersion: 2
-guid: ce846aeb4599d3647ab47aef55a9d127
+guid: 32027e2ed6eddc74caeee5fb8c2f14b6
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 6243047202823125899
-    second: wisp_glowing_left_0
+      213: 6993816353665130531
+    second: IsttechtaserALL_0
   - first:
-      213: 1203504303592331934
-    second: wisp_glowing_left_1
+      213: -5445063476441159200
+    second: IsttechtaserALL_1
   - first:
-      213: -4671343517336074438
-    second: wisp_glowing_left_2
+      213: 5383265738589308979
+    second: IsttechtaserALL_2
   - first:
-      213: 3991797884852433853
-    second: wisp_glowing_left_3
+      213: 3333327671364561488
+    second: IsttechtaserALL_3
   - first:
-      213: 4304142900466663679
-    second: wisp_glowing_left_4
+      213: -2949766203803930241
+    second: IsttechtaserALL_4
   - first:
-      213: -4961971912850826570
-    second: wisp_glowing_left_5
-  - first:
-      213: -6497573449034417843
-    second: wisp_glowing_left_6
-  - first:
-      213: -5368493531186534833
-    second: wisp_glowing_left_7
+      213: 6460347646806537780
+    second: IsttechtaserALL_5
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -121,13 +115,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: wisp_glowing_left_0
+      name: IsttechtaserALL_0
       rect:
         serializedVersion: 2
-        x: 15
-        y: 13
-        width: 33
-        height: 52
+        x: 41
+        y: 30
+        width: 189
+        height: 203
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -136,20 +130,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: b8bb4489a52c3a650800000000000000
-      internalID: 6243047202823125899
+      spriteID: 32027883be60f0160800000000000000
+      internalID: 6993816353665130531
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: wisp_glowing_left_2
+      name: IsttechtaserALL_1
       rect:
         serializedVersion: 2
-        x: 55
-        y: 13
-        width: 34
-        height: 52
+        x: 282
+        y: 30
+        width: 191
+        height: 203
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -158,20 +152,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: a370c5122dd0c2fb0800000000000000
-      internalID: -4671343517336074438
+      spriteID: 0e9654b0e9f3f64b0800000000000000
+      internalID: -5445063476441159200
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: wisp_glowing_left_7
+      name: IsttechtaserALL_2
       rect:
         serializedVersion: 2
-        x: 94
-        y: 12
-        width: 34
-        height: 53
+        x: 508
+        y: 30
+        width: 191
+        height: 203
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -180,8 +174,74 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: f46e4aea3974f75b0800000000000000
-      internalID: -5368493531186534833
+      spriteID: 3388520eaa335ba40800000000000000
+      internalID: 5383265738589308979
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: IsttechtaserALL_3
+      rect:
+        serializedVersion: 2
+        x: 738
+        y: 30
+        width: 191
+        height: 203
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 05a2aab3bdb524e20800000000000000
+      internalID: 3333327671364561488
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: IsttechtaserALL_4
+      rect:
+        serializedVersion: 2
+        x: 971
+        y: 30
+        width: 191
+        height: 203
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f7170d324435017d0800000000000000
+      internalID: -2949766203803930241
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: IsttechtaserALL_5
+      rect:
+        serializedVersion: 2
+        x: 1217
+        y: 30
+        width: 191
+        height: 203
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4363f65d4f3c7a950800000000000000
+      internalID: 6460347646806537780
       vertices: []
       indices: 
       edges: []
@@ -190,7 +250,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 61d20b96863c042408ca5d6d01d392ff
+    spriteID: cac33afa85ab2014794627a4defc7283
     internalID: 0
     vertices: []
     indices: 
@@ -200,14 +260,12 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      wisp_glowing_left_0: 6243047202823125899
-      wisp_glowing_left_1: 1203504303592331934
-      wisp_glowing_left_2: -4671343517336074438
-      wisp_glowing_left_3: 3991797884852433853
-      wisp_glowing_left_4: 4304142900466663679
-      wisp_glowing_left_5: -4961971912850826570
-      wisp_glowing_left_6: -6497573449034417843
-      wisp_glowing_left_7: -5368493531186534833
+      IsttechtaserALL_0: 6993816353665130531
+      IsttechtaserALL_1: -5445063476441159200
+      IsttechtaserALL_2: 5383265738589308979
+      IsttechtaserALL_3: 3333327671364561488
+      IsttechtaserALL_4: -2949766203803930241
+      IsttechtaserALL_5: 6460347646806537780
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

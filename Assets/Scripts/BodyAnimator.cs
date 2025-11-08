@@ -35,7 +35,7 @@ public class BodyAnimator : MonoBehaviour
     private readonly List<LimbArc> _limbArcs = new();
     private Quaternion _torsoBaseRot;
     private Quaternion _pelvisBaseRot;
-    private Vector3 _headBasePos;
+    private Vector3 _headBasePos = new Vector3(0f, 1.4f, 0f);
     private Quaternion _headBaseRot;
     private Coroutine _currentRoutine;
 
@@ -44,7 +44,7 @@ public class BodyAnimator : MonoBehaviour
         CacheTransforms();
         _torsoBaseRot = torso != null ? torso.localRotation : Quaternion.identity;
         _pelvisBaseRot = pelvis != null ? pelvis.localRotation : Quaternion.identity;
-        _headBasePos = head != null ? head.localPosition : Vector3.zero;
+        _headBasePos = head != null ? head.localPosition : new Vector3(0f, 1.4f, 0f);
         _headBaseRot = head != null ? head.localRotation : Quaternion.identity;
     }
 
@@ -117,7 +117,7 @@ public class BodyAnimator : MonoBehaviour
 
     public void StartAnimation(string animationName)
     {
-        if (!isActiveAndEnabled)
+        if (!enabled)
         {
             return;
         }
@@ -129,6 +129,7 @@ public class BodyAnimator : MonoBehaviour
             case "walk":
             case "walking":
             case "walkcycle":
+            
                 _currentRoutine = StartCoroutine(WalkRoutine());
                 break;
             default:

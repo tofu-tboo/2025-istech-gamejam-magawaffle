@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 34e88f374b8d6294483bdd864cf1e153
+guid: 8d4303c4487ab9c43bf286810b1efef5
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -6645582565555624816
-    second: Isttechtaser_0
+      213: 7636779136490712603
+    second: hydraulic_press_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,13 +100,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Isttechtaser_0
+      name: hydraulic_press_0
       rect:
         serializedVersion: 2
-        x: 147
-        y: 57
-        width: 766
-        height: 888
+        x: 45
+        y: 51
+        width: 168
+        height: 154
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 094278ecdd526c3a0800000000000000
-      internalID: -6645582565555624816
+      spriteID: b1ea4aac92a4bf960800000000000000
+      internalID: 7636779136490712603
       vertices: []
       indices: 
       edges: []
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Isttechtaser_0: -6645582565555624816
+      hydraulic_press_0: 7636779136490712603
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

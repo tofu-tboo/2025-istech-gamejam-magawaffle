@@ -1,0 +1,435 @@
+fileFormatVersion: 2
+guid: 49e378cdf596e8e44a4381c6a0aa471a
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 5510015629659644657
+    second: wisp-Photoroom_0
+  - first:
+      213: 1585859122412624924
+    second: wisp-Photoroom_1
+  - first:
+      213: 7697778375731681022
+    second: wisp-Photoroom_2
+  - first:
+      213: 2609822316163969855
+    second: wisp-Photoroom_3
+  - first:
+      213: -8421677356146642500
+    second: wisp-Photoroom_4
+  - first:
+      213: 5761134304831351438
+    second: wisp-Photoroom_5
+  - first:
+      213: -8600462105686910276
+    second: wisp-Photoroom_6
+  - first:
+      213: 6772968750587831153
+    second: wisp-Photoroom_7
+  - first:
+      213: -6038964498429144017
+    second: wisp-Photoroom_8
+  - first:
+      213: -5742117082412827680
+    second: wisp-Photoroom_9
+  - first:
+      213: -8924034193269013916
+    second: wisp-Photoroom_10
+  - first:
+      213: -1692236942153904575
+    second: wisp-Photoroom_11
+  - first:
+      213: -983320066014273981
+    second: wisp-Photoroom_12
+  - first:
+      213: 3507522363303823856
+    second: wisp-Photoroom_13
+  - first:
+      213: -7113050814383812129
+    second: wisp-Photoroom_14
+  - first:
+      213: -1239587520007905052
+    second: wisp-Photoroom_15
+  - first:
+      213: 6501785872320181272
+    second: wisp-Photoroom_16
+  - first:
+      213: 3427669009333193207
+    second: wisp-Photoroom_17
+  - first:
+      213: 7505775975970362101
+    second: wisp-Photoroom_18
+  - first:
+      213: -1403517505470921051
+    second: wisp-Photoroom_19
+  - first:
+      213: 601694617003710215
+    second: wisp-Photoroom_20
+  - first:
+      213: -7854851984927176980
+    second: wisp-Photoroom_21
+  - first:
+      213: -1981648705483704715
+    second: wisp-Photoroom_22
+  - first:
+      213: 4987252716261178481
+    second: wisp-Photoroom_23
+  - first:
+      213: -6917348116220447240
+    second: wisp-Photoroom_24
+  - first:
+      213: -2097784747149026704
+    second: wisp-Photoroom_25
+  - first:
+      213: 4765845542172682614
+    second: wisp-Photoroom_26
+  - first:
+      213: 3902160627205177167
+    second: wisp-Photoroom_27
+  - first:
+      213: 8583124720742822928
+    second: wisp-Photoroom_28
+  - first:
+      213: -9135255382116132767
+    second: wisp-Photoroom_29
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: wisp-Photoroom_5
+      rect:
+        serializedVersion: 2
+        x: 36
+        y: 774
+        width: 231
+        height: 369
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e8a2ace5029a3ff40800000000000000
+      internalID: 5761134304831351438
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: wisp-Photoroom_8
+      rect:
+        serializedVersion: 2
+        x: 407
+        y: 778
+        width: 233
+        height: 365
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f249fe3d8c9413ca0800000000000000
+      internalID: -6038964498429144017
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: wisp-Photoroom_9
+      rect:
+        serializedVersion: 2
+        x: 778
+        y: 774
+        width: 231
+        height: 369
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0ebb414cfe6ef40b0800000000000000
+      internalID: -5742117082412827680
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: wisp-Photoroom_15
+      rect:
+        serializedVersion: 2
+        x: 38
+        y: 406
+        width: 231
+        height: 368
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4e0ebe9d7b91ccee0800000000000000
+      internalID: -1239587520007905052
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: wisp-Photoroom_16
+      rect:
+        serializedVersion: 2
+        x: 411
+        y: 402
+        width: 232
+        height: 376
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8143c4d8dcbfa3a50800000000000000
+      internalID: 6501785872320181272
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: wisp-Photoroom_17
+      rect:
+        serializedVersion: 2
+        x: 782
+        y: 402
+        width: 231
+        height: 371
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7f98becadc6819f20800000000000000
+      internalID: 3427669009333193207
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: wisp-Photoroom_25
+      rect:
+        serializedVersion: 2
+        x: 42
+        y: 33
+        width: 232
+        height: 372
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 07a13f213eb23e2e0800000000000000
+      internalID: -2097784747149026704
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: wisp-Photoroom_26
+      rect:
+        serializedVersion: 2
+        x: 411
+        y: 36
+        width: 233
+        height: 364
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 679e493254fa32240800000000000000
+      internalID: 4765845542172682614
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: wisp-Photoroom_27
+      rect:
+        serializedVersion: 2
+        x: 780
+        y: 36
+        width: 231
+        height: 366
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f4f74197a62472630800000000000000
+      internalID: 3902160627205177167
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: dc6184d46aec19b4bb713f65040e282e
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      wisp-Photoroom_0: 5510015629659644657
+      wisp-Photoroom_1: 1585859122412624924
+      wisp-Photoroom_10: -8924034193269013916
+      wisp-Photoroom_11: -1692236942153904575
+      wisp-Photoroom_12: -983320066014273981
+      wisp-Photoroom_13: 3507522363303823856
+      wisp-Photoroom_14: -7113050814383812129
+      wisp-Photoroom_15: -1239587520007905052
+      wisp-Photoroom_16: 6501785872320181272
+      wisp-Photoroom_17: 3427669009333193207
+      wisp-Photoroom_18: 7505775975970362101
+      wisp-Photoroom_19: -1403517505470921051
+      wisp-Photoroom_2: 7697778375731681022
+      wisp-Photoroom_20: 601694617003710215
+      wisp-Photoroom_21: -7854851984927176980
+      wisp-Photoroom_22: -1981648705483704715
+      wisp-Photoroom_23: 4987252716261178481
+      wisp-Photoroom_24: -6917348116220447240
+      wisp-Photoroom_25: -2097784747149026704
+      wisp-Photoroom_26: 4765845542172682614
+      wisp-Photoroom_27: 3902160627205177167
+      wisp-Photoroom_28: 8583124720742822928
+      wisp-Photoroom_29: -9135255382116132767
+      wisp-Photoroom_3: 2609822316163969855
+      wisp-Photoroom_4: -8421677356146642500
+      wisp-Photoroom_5: 5761134304831351438
+      wisp-Photoroom_6: -8600462105686910276
+      wisp-Photoroom_7: 6772968750587831153
+      wisp-Photoroom_8: -6038964498429144017
+      wisp-Photoroom_9: -5742117082412827680
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
