@@ -150,13 +150,13 @@ public class Body : MonoBehaviour
                 animator?.StartAnimation("free");
                 break;
             case BodyState.dead:
-                if (_state == BodyState.undead) // 새 Body 요청
-                {
+                if (_state != BodyState.undead && _state!= BodyState.dead) // 새 Body 요청
+                //{
                     if (GameManager.Instance != null)
                     {
                         GameManager.Instance.SpawnNewUndeadBody();
                     }
-                }
+                //}
                 isPlaying = false;
                 animator?.StartAnimation("free");
                 break;

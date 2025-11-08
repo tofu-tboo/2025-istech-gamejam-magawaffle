@@ -117,27 +117,36 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void SpawnNewUndeadBody()
     {
-        Debug.Log("GameManager: 'dead' 알림 수신. 새 'undead' Body를 리스폰합니다.");
+        if (bodyPrefab == null)
+        {
+            Debug.LogError("GameManager: bodyPrefab이 할당되지 않았습니다!");
+            return;
+        }
 
-        GameObject newBodyObj = Instantiate(bodyPrefab, respawnPoint.position, respawnPoint.rotation);
-        
-        // [추가] Body 생성 횟수 증가
+        if (respawnPoint == null)
+        {
+            Debug.LogError("GameManager: respawnPoint가 할당되지 않았습니다!");
+            return;
+        }
+
+        Debug.Log("GameManager: 리스폰 포인트에 새 육체 생성 요청.");
+
+        // 1. 새 Body 오브젝트 생성
+        GameObject newBodyObj = Instantiate(bodyPrefab, respawnPoint.position, Quaternion.identity);
         _totalBodiesSpawned++;
 
+        // 2. Body 스크립트에 접근하여 초기 상태 설정
         Body newBody = newBodyObj.GetComponent<Body>();
-
         if (newBody != null)
         {
-            // [중요] 생성된 Body의 상태를 'undead'로 설정 (빙의하지 않음)
-            newBody.state = BodyState.undead; 
-            activeBodies.Add(newBodyObj);
+            newBody.state = BodyState.undead; // 초기 상태는 'undead'
+            activeBodies.Add(newBodyObj); // 리스트에 추가 (옵션)
         }
         else
         {
             Debug.LogError("bodyPrefab에 Body.cs 스크립트가 없습니다!");
         }
     }
-
     public void SpawnAndPossessBody(Vector3 spawnPosition)
     {
         Debug.Log($"GameManager: {spawnPosition}에 새 육체를 생성하고 빙의합니다.");
