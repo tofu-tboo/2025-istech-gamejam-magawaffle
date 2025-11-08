@@ -179,6 +179,8 @@ public class Body : MonoBehaviour
             // [핵심 수정 3] 'playing' 상태(enable=true)일 때 Rigidbody를 활성화해야
             // Character가 제어할 수 있습니다.
             locomotionBody.simulated = enable;
+            locomotionBody.freezeRotation = enable;
+            
         }
 
         // // Etc
