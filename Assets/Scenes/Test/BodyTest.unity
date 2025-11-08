@@ -347,7 +347,7 @@ MonoBehaviour:
   resurrectKey: 114
   mainDoor: {fileID: 0}
   trapBridge: {fileID: 0}
-  bodyLayerName: Ragdoll
+  bodyLayerName: Body
 --- !u!4 &1552099981
 Transform:
   m_ObjectHideFlags: 0

@@ -181,36 +181,66 @@ public class Body : MonoBehaviour
     }
 
     private void ToggleRagdoll(bool enable) // enable 여부에 따라서 흐느적거림 조정.
+{
+    // [핵심 수정 1] 래그돌 자식이 없는 '단순 Body' (Square 등) 처리
+    if (_ragdollBodies.Count == 0 && locomotionBody != null)
     {
-        foreach (var body in _ragdollBodies)
+        if (enable) // Dynamic (undead/dead) => 흐느적거림
         {
-            if (enable) // Dynamic => 흐느적거림
-            {
-                body.bodyType = RigidbodyType2D.Dynamic;
-                body.gravityScale = ragdollGravityScale;
-                body.linearDamping = ragdollLinearDrag;
-                body.angularDamping = ragdollAngularDrag;
-                body.simulated = true;
-            }
-            else // Kinematic => Animation으로만 제어
-            {
-                body.linearVelocity = Vector2.zero;
-                body.angularVelocity = 0f;
-                body.bodyType = RigidbodyType2D.Kinematic;
-                body.simulated = false;
-            }
+            locomotionBody.bodyType = RigidbodyType2D.Dynamic;
+            locomotionBody.gravityScale = ragdollGravityScale;
+            locomotionBody.linearDamping = ragdollLinearDrag;
+            locomotionBody.angularDamping = ragdollAngularDrag;
+            
+            // ToggleSystems(false)가 껐던 시뮬레이션을
+            // 래그돌 물리(감지)를 위해 다시 켭니다.
+            locomotionBody.simulated = true; 
         }
-
-        foreach (var joint in _ragdollJoints)
+        else // Kinematic (playing) => 애니메이션 제어
         {
-            joint.enabled = enable;
-        }
-
-        foreach (var collider in _ragdollColliders)
-        {
-            collider.enabled = enable;
+            // 'playing' 상태로 돌아갈 때.
+            // Character.cs가 PossessBody에서 Dynamic으로 바꿀 것이므로
+            // 여기서는 Kinematic으로만 둡니다. (애니메이션 제어용)
+            locomotionBody.bodyType = RigidbodyType2D.Kinematic;
+            locomotionBody.linearVelocity = Vector2.zero;
+            locomotionBody.angularVelocity = 0f;
+            
+            // 'simulated'는 ToggleSystems(true)가 true로 설정하므로
+            // 여기서는 건드리지 않아도 됩니다.
         }
     }
+
+    // --- 기존 래그돌(복합 Body) 로직 ---
+    // (이 코드는 _ragdollBodies.Count > 0 일 때만 의미가 있습니다)
+    foreach (var body in _ragdollBodies)
+    {
+        if (enable) // Dynamic => 흐느적거림
+        {
+            body.bodyType = RigidbodyType2D.Dynamic;
+            body.gravityScale = ragdollGravityScale;
+            body.linearDamping = ragdollLinearDrag;
+            body.angularDamping = ragdollAngularDrag;
+            body.simulated = true;
+        }
+        else // Kinematic => Animation으로만 제어
+        {
+            body.linearVelocity = Vector2.zero;
+            body.angularVelocity = 0f;
+            body.bodyType = RigidbodyType2D.Kinematic;
+            body.simulated = false;
+        }
+    }
+
+    foreach (var joint in _ragdollJoints)
+    {
+        joint.enabled = enable;
+    }
+
+    foreach (var collider in _ragdollColliders)
+    {
+        collider.enabled = enable;
+    }
+}
 
     void CheckGround()
     {
@@ -239,5 +269,19 @@ public class Body : MonoBehaviour
     public bool IsGrounded()
     {
         return isGrounded;
+    }
+
+    /// <summary>
+    /// 이 게임오브젝트와 모든 자식 오브젝트의 레이어를 재귀적으로 설정합니다.
+    /// </summary>
+    /// <param name="newLayer">새 레이어 인덱스</param>
+    public void SetLayerRecursively(int newLayer)
+    {
+        // 모든 자식 트랜스폼(자기 자신 포함)을 가져옵니다.
+        Transform[] allChildren = GetComponentsInChildren<Transform>(true);
+        foreach (Transform child in allChildren)
+        {
+            child.gameObject.layer = newLayer;
+        }
     }
 }

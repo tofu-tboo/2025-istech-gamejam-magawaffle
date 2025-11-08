@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 7696391936478140711}
   - component: {fileID: 4226885759876470250}
   - component: {fileID: 961755165670185815}
-  m_Layer: 8
+  m_Layer: 6
   m_Name: LegRU
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -202,7 +202,7 @@ GameObject:
   - component: {fileID: 1352328408420931559}
   - component: {fileID: 4572089813003964762}
   - component: {fileID: 3477182096906006833}
-  m_Layer: 8
+  m_Layer: 6
   m_Name: LegLU
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -389,7 +389,7 @@ GameObject:
   - component: {fileID: 6487429746097515070}
   - component: {fileID: 8640251741921399876}
   - component: {fileID: 8163360860505815318}
-  m_Layer: 8
+  m_Layer: 6
   m_Name: Body
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -482,7 +482,7 @@ GameObject:
   - component: {fileID: 9052824008353694065}
   - component: {fileID: 2996209677056837475}
   - component: {fileID: 5511101914166205002}
-  m_Layer: 8
+  m_Layer: 6
   m_Name: Torso
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -670,7 +670,7 @@ GameObject:
   - component: {fileID: 1177290940363560998}
   - component: {fileID: 6515684433076542225}
   - component: {fileID: 4827142361707246326}
-  m_Layer: 8
+  m_Layer: 6
   m_Name: Pelvis
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -833,7 +833,7 @@ GameObject:
   - component: {fileID: 864429898360892940}
   - component: {fileID: 8923221660223239336}
   - component: {fileID: 7940498355159655850}
-  m_Layer: 8
+  m_Layer: 6
   m_Name: ArmRD
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1022,7 +1022,7 @@ GameObject:
   - component: {fileID: 8002651034986727268}
   - component: {fileID: 6809465628476058966}
   - component: {fileID: 2382608199176403497}
-  m_Layer: 8
+  m_Layer: 6
   m_Name: LegLD
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1211,7 +1211,7 @@ GameObject:
   - component: {fileID: 5398065300930145462}
   - component: {fileID: 2784312156913441540}
   - component: {fileID: 2662699737701351289}
-  m_Layer: 8
+  m_Layer: 6
   m_Name: LegRD
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1400,7 +1400,7 @@ GameObject:
   - component: {fileID: 5050697525289683315}
   - component: {fileID: 2918106085440279389}
   - component: {fileID: 7208860829248132313}
-  m_Layer: 8
+  m_Layer: 6
   m_Name: ArmLD
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1589,7 +1589,7 @@ GameObject:
   - component: {fileID: 3042945946398656682}
   - component: {fileID: 2205633230768336969}
   - component: {fileID: 4018026044059594988}
-  m_Layer: 8
+  m_Layer: 6
   m_Name: ArmRU
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1778,7 +1778,7 @@ GameObject:
   - component: {fileID: 5774415942718992961}
   - component: {fileID: 5336897171333815165}
   - component: {fileID: 4756386374739077646}
-  m_Layer: 8
+  m_Layer: 6
   m_Name: ArmLU
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1966,7 +1966,7 @@ GameObject:
   - component: {fileID: 4774779839455037681}
   - component: {fileID: 7057567122222067622}
   - component: {fileID: 7780049539365796315}
-  m_Layer: 8
+  m_Layer: 6
   m_Name: Head
   m_TagString: Untagged
   m_Icon: {fileID: 0}
