@@ -726,6 +726,8 @@ MonoBehaviour:
   ghostMaxSpeed: 4
   ghostAcclerationForce: 100
   ghostInstantSpeed: 4
+  spriteRenderer: {fileID: 0}
+  animator: {fileID: 0}
   state: 1
 --- !u!58 &1783092189
 CircleCollider2D:

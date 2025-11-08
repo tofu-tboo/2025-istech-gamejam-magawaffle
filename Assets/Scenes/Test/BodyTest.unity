@@ -495,7 +495,7 @@ MonoBehaviour:
   jumpKey: 32
   dieKey: 113
   killKey: 101
-  findrange: 10
+  findrange: 0.1
   movetype: 1
   maxSpeed: 3
   acclerationForce: 100

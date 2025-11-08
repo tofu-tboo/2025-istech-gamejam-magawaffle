@@ -138,6 +138,38 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void SpawnAndPossessBody(Vector3 spawnPosition)
+    {
+        Debug.Log($"GameManager: {spawnPosition}에 새 육체를 생성하고 빙의합니다.");
+
+        // 1. 지정된 위치에 Body 프리팹 생성
+        GameObject newBodyObj = Instantiate(bodyPrefab, spawnPosition, Quaternion.identity);
+        
+        // 2. 스폰 카운터 증가
+        _totalBodiesSpawned++;
+
+        Body newBody = newBodyObj.GetComponent<Body>();
+
+        if (newBody != null)
+        {
+            // 3. 생성된 Body 리스트에 추가
+            activeBodies.Add(newBodyObj);
+            
+            // 4. 'playerSoul' (Character)에게 이 Body에 빙의하라고 명령
+            if (playerSoul != null)
+            {
+                playerSoul.PossessBody(newBody);
+            }
+            else
+            {
+                Debug.LogError("GameManager: playerSoul이 할당되지 않았습니다!");
+            }
+        }
+        else
+        {
+            Debug.LogError("bodyPrefab에 Body.cs 스크립트가 없습니다!");
+        }
+    }
 
     /// <summary>
     /// 맵의 모든 'Body'를 파괴하고 새로 시작합니다. (퍼즐 리셋용)

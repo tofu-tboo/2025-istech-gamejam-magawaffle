@@ -50,6 +50,7 @@ public class Character : MonoBehaviour
     public Body currentBody { get; private set; }
     private Rigidbody2D rb;  // Character(영혼)의 Rigidbody
     private Collider2D col; // Character(영혼)의 Collider
+    private Transform currentCapsule = null;
 
     private Vector2 movingDirection;
     private bool jumpRequested; 
@@ -111,7 +112,20 @@ public class Character : MonoBehaviour
             if (Input.GetKey(upKey)) movingDirection += Vector2.up;
             if (Input.GetKey(downKey)) movingDirection += Vector2.down;
             
-            if (Input.GetKeyDown(dieKey)) AttemptRePossession();
+            if (Input.GetKeyDown(dieKey))
+            {
+                // 1순위: 배양기(Capsule)에 닿아있는가?
+                if (currentCapsule != null)
+                {
+                    // 배양기에 닿아있으면, GameManager에 새 Body 스폰 및 빙의 요청
+                    GameManager.Instance.SpawnAndPossessBody(currentCapsule.position);
+                }
+                else
+                {
+                    // 2순위: (배양기에 닿지 않았으면) 근처의 'undead' Body에 재빙의 시도
+                    AttemptRePossession();
+                }
+            }
         }
     }
 
@@ -317,7 +331,7 @@ public class Character : MonoBehaviour
         // currentBody.transform.SetParent(this.transform, true);
         // currentBody.transform.localPosition = Vector3.zero;
     }
-    
+
     /// <summary>
     /// Body가 '소멸'될 때(예: 피스톤) 호출됩니다.
     /// currentBody에 접근하지 않고 즉시 고스트 상태로 전환합니다.
@@ -325,10 +339,32 @@ public class Character : MonoBehaviour
     public void HandleBodyDestruction()
     {
         Debug.Log("Body가 소멸되어 강제로 고스트가 됩니다.");
-        
+
         // private인 BecomeGhost() 함수를 호출하여
         // currentBody = null, bodyRb = null 등을 처리하고
         // 고스트 물리 상태로 전환합니다.
         BecomeGhost();
+    }
+        private void OnTriggerEnter2D(Collider2D other)
+    {
+        // 진입한 Trigger가 "Capsule" 태그인지 확인
+        if (other.gameObject.CompareTag("Capsule"))
+        {
+            Debug.Log("Character(Ghost)가 배양기(Capsule)에 진입.");
+            currentCapsule = other.transform; // 배양기 위치 저장
+        }
+    }
+
+    /// <summary>
+    /// [추가] Character(영혼)의 Trigger가 다른 Collider에서 빠져나왔을 때
+    /// </summary>
+    private void OnTriggerExit2D(Collider2D other)
+    {
+        // 이탈한 Trigger가 "Capsule" 태그인지 확인
+        if (other.gameObject.CompareTag("Capsule"))
+        {
+            Debug.Log("Character(Ghost)가 배양기(Capsule)에서 이탈.");
+            currentCapsule = null; // 배양기 위치 정보 삭제
+        }
     }
 }
