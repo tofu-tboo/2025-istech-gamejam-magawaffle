@@ -41,9 +41,6 @@ public class Button : MonoBehaviour
         {
             sr.sprite = spriteReleased; // 시작 시 '꺼진' 스프라이트로 설정
         }
-
-        // Collider2D를 Trigger로 강제 설정
-        GetComponent<Collider2D>().isTrigger = true;
     }
 
     private void OnTriggerEnter2D(Collider2D other)
