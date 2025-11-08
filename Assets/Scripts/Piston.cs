@@ -28,6 +28,7 @@ public class Piston : MonoBehaviour
     [SerializeField] private LayerMask playerLayer;
     [Tooltip("바닥으로 인식할 레이어")]
     [SerializeField] private LayerMask groundLayer;
+    private LayerMask combinedDetectionMask; // [추가]
 
     [Header("스프라이트 (Sprites)")]
     [SerializeField] private Sprite activeMagneticSprite;
@@ -58,6 +59,18 @@ public class Piston : MonoBehaviour
         {
             Debug.LogError("Piston: 'pressObject'에 Rigidbody2D 또는 Collider2D가 없습니다.", this);
             return;
+        }
+
+        int bodyLayerIndex = LayerMask.NameToLayer("Body");
+        if (bodyLayerIndex != -1)
+        {
+            // playerLayer에 "Body" 레이어를 추가
+            combinedDetectionMask = playerLayer | (1 << bodyLayerIndex);
+        }
+        else
+        {
+            Debug.LogWarning("Piston: 'Body' layer not found. Piston will only detect 'Player' layer.");
+            combinedDetectionMask = playerLayer;
         }
 
         // Rigidbody를 Kinematic으로 강제 설정
@@ -183,7 +196,7 @@ public class Piston : MonoBehaviour
         
         // 콜라이더의 바닥 중앙 지점 계산
         Vector2 rayOrigin = new Vector2(pressCollider.bounds.center.x, pressCollider.bounds.min.y);
-        RaycastHit2D hit = Physics2D.Raycast(rayOrigin, Vector2.down, detectionRange, playerLayer);
+        RaycastHit2D hit = Physics2D.Raycast(rayOrigin, Vector2.down, detectionRange, combinedDetectionMask);
 
         // Debug.DrawRay(rayOrigin, Vector2.down * detectionRange, Color.red);
         
