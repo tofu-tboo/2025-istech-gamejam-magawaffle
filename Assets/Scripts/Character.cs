@@ -21,12 +21,14 @@ public class Character : MonoBehaviour
 
     [Header("Game Settings")]
     [Header("Movement Settings")]
-    [SerializeField] private float maxSpeed = 5f;
-    [SerializeField] private float acclerationForce = 10f;
+    [SerializeField] private float maxSpeed = 3f;
+    [SerializeField] private float acclerationForce = 100f;
+    [SerializeField] private float maxGhostSpeed = 5f;
+    [SerializeField] private float acclerationGhostForce = 100f;
 
     [Header("Jump Settings")]
-    [SerializeField] private float jumpForce = 10f;
-    [SerializeField] private float gravityScale = 1f;
+    [SerializeField] private float jumpForce = 20f;
+    [SerializeField] private float gravityScale = 3f;
 
     private Rigidbody2D rb;
     private Vector2 movingDirection;
@@ -102,10 +104,10 @@ public class Character : MonoBehaviour
         else if (state == CharacterState.ghost)
         {
             rb.gravityScale = 0f;
-            rb.AddForce(movingDirection.normalized * acclerationForce);
-            if (rb.linearVelocity.magnitude > maxSpeed)
+            rb.AddForce(movingDirection.normalized * acclerationGhostForce);
+            if (rb.linearVelocity.magnitude > maxGhostSpeed)
             {
-                rb.linearVelocity = rb.linearVelocity.normalized * maxSpeed;
+                rb.linearVelocity = rb.linearVelocity.normalized * maxGhostSpeed;
             }
         }
     }
