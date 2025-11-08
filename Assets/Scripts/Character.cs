@@ -43,12 +43,9 @@ public class Character : MonoBehaviour
     [SerializeField] private float ghostAcclerationForce = 100f;
     public float ghostInstantSpeed = 4f;
 
-    // [삭제] Character는 groundCheck가 필요 없음
-    // [Header("Layer Settings")]
-    // [SerializeField] private LayerMask groundLayer;
-    // [SerializeField] private Transform groundCheck;
-    // [SerializeField] private float groundCheckDistance = 0.1f;
-
+    [Header("Soul Visuals")] // [추가] 영혼 시각적 요소를 위한 헤더
+    [SerializeField] private SpriteRenderer spriteRenderer; // [추가] 영혼 스프라이트
+    [SerializeField] private Animator animator;               // [추가] 영혼 애니메이터
 
     public Body currentBody { get; private set; }
     private Rigidbody2D rb;  // Character(영혼)의 Rigidbody
@@ -64,18 +61,18 @@ public class Character : MonoBehaviour
     private int ghostLayerIndex;
     private int bodyLayerIndex;
     
-    // [추가] 제어할 Body의 Rigidbody
     private Rigidbody2D bodyRb;
     private bool isWalking;
-
-    // [삭제] Character는 isGrounded 변수가 필요 없음
 
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         col = GetComponent<Collider2D>();
         
-        // [수정] Character의 콜라이더는 항상 Trigger여야 합니다. (Body와 충돌 방지)
+        // [추가] 시각적 요소 컴포넌트 가져오기
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        animator = GetComponent<Animator>();
+        
         col.isTrigger = true; 
         
         DontDestroyOnLoad(gameObject);
@@ -96,7 +93,6 @@ public class Character : MonoBehaviour
             if (Input.GetKey(leftKey)) movingDirection += Vector2.left;
             if (Input.GetKey(rightKey)) movingDirection += Vector2.right;
 
-            // [수정] Body의 IsGrounded()를 사용
             if (Input.GetKeyDown(jumpKey) && currentBody != null && currentBody.IsGrounded())
             {
                 jumpRequested = true;
@@ -120,22 +116,17 @@ public class Character : MonoBehaviour
     {
         if (state == CharacterState.moving)
         {
-            // [수정]
-            // Q(ReleaseBody)로 인해 currentBody가 null이 되거나
-            // 장애물 충돌로 bodyRb가 null이 될 수 있음
             if (currentBody == null || bodyRb == null) 
             {
-                BecomeGhost(); // 안전장치
+                BecomeGhost(); 
                 return;
             }
 
-            // [핵심 추가]
-            // 장애물 충돌 등으로 Body가 'dead' 상태가 되었는지 확인
             if (currentBody.state == BodyState.dead)
             {
                 // 2. 고스트로 전환
                 BecomeGhost();
-                return; // 물리 제어를 중단합니다.
+                return; 
             }
             
             if (movetype == MovementType.instant)
@@ -157,7 +148,7 @@ public class Character : MonoBehaviour
         }
         else if (state == CharacterState.ghost)
         {
-            // 유령 모드는 'rb' (자신)를 제어
+            // --- 유령 물리 이동 로직 ---
             if (ghostMoveType == MovementType.instant)
             {
                 rb.linearVelocity = movingDirection.normalized * ghostInstantSpeed;
@@ -170,10 +161,18 @@ public class Character : MonoBehaviour
                     rb.linearVelocity = rb.linearVelocity.normalized * ghostMaxSpeed;
                 }
             }
+            
+            // --- [핵심 수정] 애니메이터 제어 로직 ---
+            // Animator에 현재 수평 입력(-1 ~ 1) 값을 전달합니다.
+            // Animator Controller가 이 'MoveX' 값을 보고 
+            // 'PlayerIdle', 'PlayerSoulLeft', 'PlayerSoulRight' 상태를 자동으로 전환합니다.
+            if (animator != null)
+            {
+                animator.SetFloat("MoveX", movingDirection.x);
+            }
         }
     }
 
-    // [추가] Character(뇌)가 Body(육체)의 위치를 따라가도록 함
     void LateUpdate()
     {
         if (state == CharacterState.moving && currentBody != null)
@@ -181,30 +180,22 @@ public class Character : MonoBehaviour
             transform.position = currentBody.transform.position;
         }
     }
-
-    // [삭제] Character의 CheckGround() 함수 삭제
-
-    /// <summary>
-    /// Q키: Body를 'undead' 상태로 만들고, 'Body' 레이어로 전환합니다.
-    /// </summary>
+    
     public void ReleaseBody()
     {
         if (currentBody != null)
         {
-            currentBody.state = BodyState.undead; // 레이어 자동 변경
+            currentBody.state = BodyState.undead; 
+            currentBody.SetLayerRecursively(bodyLayerIndex); 
             currentBody = null;
         }
         BecomeGhost();
     }
-
-    /// <summary>
-    /// E키: Body를 'dead' 상태로 만들고...
-    /// </summary>
+    
     private void KillCurrentBody()
     {
         if (currentBody != null)
         {
-            // [수정] 부모-자식 관계가 아니므로 SetParent 필요 없음
             currentBody.state = BodyState.dead; 
             currentBody = null;
         }
@@ -215,33 +206,28 @@ public class Character : MonoBehaviour
             GameManager.Instance.SpawnNewUndeadBody();
         }
     }
-
-    /// <summary>
-    /// 유령 상태로 전환합니다.
-    /// </summary>
+    
     private void BecomeGhost()
     {
         state = CharacterState.ghost;
         currentBody = null;
-        bodyRb = null; // Body 제어 해제
+        bodyRb = null; 
 
-        // Character(자신)의 Rigidbody를 유령 모드로 활성화
+        // [수정] 영혼 시각 요소 활성화
+        if (spriteRenderer != null) spriteRenderer.enabled = true;
+        if (animator != null) animator.enabled = true; 
+
         rb.simulated = true;
-        rb.bodyType = RigidbodyType2D.Dynamic; // 혹시 모르니 Dynamic으로 명시
+        rb.bodyType = RigidbodyType2D.Dynamic; 
         rb.gravityScale = 0f; 
 
-        // Character의 Collider는 항상 Trigger (Awake에서 설정)
         col.enabled = true; 
         
         gameObject.layer = ghostLayerIndex;
     }
-
-    /// <summary>
-    /// Q키를 눌렀을 때 'undead' Body에 재빙의를 시도합니다.
-    /// </summary>
+    
     private void AttemptRePossession()
     {
-        // GameManager.GetOverlapped는 이제 [Body_오브젝트] (count: 1) 또는 [] (count: 0)을 반환합니다.
         List<Body> nearbyBodies = GameManager.Instance.GetOverlapped(rb.position, findrange, true);
         
         if (nearbyBodies.Count == 0)
@@ -252,15 +238,11 @@ public class Character : MonoBehaviour
 
         Body bodyToPossess = null;
         float closestDist = float.MaxValue;
-
-        // [디버그 1] 찾은 모든 Body의 상태를 확인합니다.
+        
         foreach (Body body in nearbyBodies)
         {
             if (body == null) continue; 
 
-            // [핵심 디버그]
-            // Q키를 눌렀을 때 이 로그가 "State is: undead"로 나와야 합니다.
-            // 만약 "dead" 또는 "playing"으로 나온다면, 상태 관리 로직에 문제가 있는 것입니다.
             Debug.Log($"[Character] Checking body '{body.gameObject.name}'. State is: {body.state}");
 
             if (body.state == BodyState.undead)
@@ -282,7 +264,6 @@ public class Character : MonoBehaviour
         }
         else
         {
-            // [디버그 2] 이 로그가 나온다면, 찾은 Body가 'undead' 상태가 아니라는 뜻입니다.
             Debug.Log("[Character] Failed to find any 'undead' bodies in the list.");
         }
     }
@@ -298,7 +279,6 @@ public class Character : MonoBehaviour
         currentBody = newBody;
         state = CharacterState.moving;
 
-        // 1. Character(자신)의 Rigidbody 비활성화
         rb.simulated = false;
         rb.linearVelocity = Vector2.zero;
 
@@ -308,13 +288,12 @@ public class Character : MonoBehaviour
         gameObject.layer = playerLayerIndex;
         jumpRequested = false;
 
-        // 3. [핵심] Body의 Rigidbody를 제어 대상으로 설정
-        bodyRb = currentBody.Rb; // (Body.cs 버그 수정으로 인해 locomotionBody가 할당됨)
+        bodyRb = currentBody.Rb; 
 
         if (bodyRb == null)
         {
             Debug.LogError("PossessBody: bodyRb(locomotionBody)가 null입니다! Body.cs의 Rb 속성을 확인하세요.");
-            BecomeGhost(); // 빙의 실패
+            BecomeGhost(); 
             return;
         }
 
