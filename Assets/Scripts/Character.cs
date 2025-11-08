@@ -98,7 +98,10 @@ public class Character : MonoBehaviour
                 jumpRequested = true;
             }
 
-            if (Input.GetKeyDown(dieKey)) ReleaseBody(); 
+            if (Input.GetKeyDown(dieKey) && currentBody != null && currentBody.IsTechTaserCollide)
+            {
+                ReleaseBody(); 
+            }
             if (Input.GetKeyDown(killKey)) KillCurrentBody();
         }
         else if (state == CharacterState.ghost)

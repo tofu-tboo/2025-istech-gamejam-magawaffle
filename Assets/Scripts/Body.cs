@@ -65,6 +65,9 @@ public class Body : MonoBehaviour
     // 플레이어 빙의 상태 확인을 위한 플래그
     private bool isPlaying = false;
 
+    private bool istechtasercollide = false;
+    public bool IsTechTaserCollide => istechtasercollide;
+
 
     private void Awake()
     {
@@ -296,14 +299,29 @@ public class Body : MonoBehaviour
         if (collision.gameObject.CompareTag("Obstacle"))
         {
             Debug.Log("Body가 Obstacle과 충돌했습니다. 'dead' 상태가 됩니다.");
-            
+
             // 'E' 키를 누른 것처럼 'dead' 상태로 변경
             // 이 상태 변경은 즉시 ApplyState(dead)를 호출하여 래그돌로 만들고
             // 레이어를 'Body'로 변경합니다.
             this.state = BodyState.dead;
         }
     }
-
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        // 충돌한 Trigger가 "Techtaser" 태그를 가졌는지 확인
+        if (other.gameObject.CompareTag("Techtaser"))
+        {
+            istechtasercollide = true;
+        }
+    }
+    private void OnTriggerExit2D(Collider2D other)
+    {
+    // 빠져나온 Trigger가 "Techtaser" 태그를 가졌는지 확인
+    if (other.gameObject.CompareTag("Techtaser"))
+        {
+        istechtasercollide = false;
+        }
+    }
 
 
 
