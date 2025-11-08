@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Body
   - Obstacle
+  - Part
   layers:
   - Default
   - TransparentFX

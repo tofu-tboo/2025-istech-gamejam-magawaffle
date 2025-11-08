@@ -4,294 +4,285 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// Procedural animator that swings arms/legs around their attachment pivots (Torso/Pelvis)
-/// while every limb rigidbody remains kinematic. Used only in BodyState.playing.
+/// Lightweight procedural animator that lerps registered rigidbodies toward caller-defined target poses.
+/// - Each body part stores its origin (local position/rotation) captured on Awake.
+/// - Call <see cref="SetTargetPose"/> to define the desired local pose for a part.
+/// - Invoke <see cref="Play(float)"/> to smoothly MovePosition/MoveRotation every part toward its target.
+/// - Use <see cref="ResetTargetsToOrigins"/> and <see cref="SnapToTargets"/> as needed.
+/// - <see cref="StartAnimation"/>/<see cref="StopAnimation"/> provide the same interface as the previous version.
 /// </summary>
-public class BodyAnimator2 : MonoBehaviour
+public class BodyAnimator : MonoBehaviour
 {
-    [Header("Core Transforms")]
-    [SerializeField] private Transform torso;
-    [SerializeField] private Transform pelvis;
-    [SerializeField] private Transform head;
+    [Serializable]
+    public class BodyPart
+    {
+        public string name;
+        public Rigidbody2D body;
 
-    [Header("Upper Limbs")]
-    [SerializeField] private Transform armLU;
-    [SerializeField] private Transform armLD;
-    [SerializeField] private Transform armRU;
-    [SerializeField] private Transform armRD;
+        [HideInInspector] public Vector3 originLocalPosition;
+        [HideInInspector] public Quaternion originLocalRotation;
+        [HideInInspector] public Vector3 targetLocalPosition;
+        [HideInInspector] public Quaternion targetLocalRotation;
 
-    [Header("Lower Limbs")]
-    [SerializeField] private Transform legLU;
-    [SerializeField] private Transform legLD;
-    [SerializeField] private Transform legRU;
-    [SerializeField] private Transform legRD;
+        public Transform Transform => body != null ? body.transform : null;
 
-    [Header("Walk Arc Settings")]
-    [SerializeField] private float armAmplitude = 30f;
-    [SerializeField] private float legAmplitude = 18f;
-    [SerializeField] private float walkFrequency = 4f;
-    [SerializeField] private float armYOffset = 0.15f;
+        public void CaptureOrigin()
+        {
+            if (Transform == null)
+            {
+                return;
+            }
 
-    private readonly List<LimbArc> _limbArcs = new();
-    private Quaternion _torsoBaseRot;
-    private Quaternion _pelvisBaseRot;
-    private Vector3 _headBasePos = new Vector3(0f, 1.4f, 0f);
-    private Quaternion _headBaseRot;
-    private Coroutine _currentRoutine;
+            Debug.Log("test: " + body.name + " / " + Transform.localPosition);
+
+            originLocalPosition = Transform.localPosition;
+            originLocalRotation = Transform.localRotation;
+            targetLocalPosition = originLocalPosition;
+            targetLocalRotation = originLocalRotation;
+        }
+    }
+
+    [SerializeField] private List<BodyPart> parts = new();
+    [SerializeField] private float defaultDuration = 0.35f;
+    [SerializeField] private AnimationCurve easingCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
+
+    private readonly Dictionary<string, BodyPart> _lookup = new(StringComparer.OrdinalIgnoreCase);
+    private Coroutine _lerpRoutine;
 
     private void Awake()
     {
-        CacheTransforms();
-        _torsoBaseRot = torso != null ? torso.localRotation : Quaternion.identity;
-        _pelvisBaseRot = pelvis != null ? pelvis.localRotation : Quaternion.identity;
-        _headBasePos = head != null ? head.localPosition : new Vector3(0f, 1.4f, 0f);
-        _headBaseRot = head != null ? head.localRotation : Quaternion.identity;
+        BuildLookup();
+        CaptureAllOrigins();
     }
 
-    private void OnEnable()
+    private void BuildLookup()
     {
-        ResetPose();
-    }
-
-    private void OnDisable()
-    {
-        StopCurrentRoutine();
-        ResetPose();
-    }
-
-    private void CacheTransforms()
-    {
-        var all = GetComponentsInChildren<Transform>(true);
-        torso ??= FindTransform(all, "Torso");
-        pelvis ??= FindTransform(all, "Pelvis");
-        head ??= FindTransform(all, "Head");
-        armLU ??= FindTransform(all, "ArmLU");
-        armRU ??= FindTransform(all, "ArmRU");
-        legLU ??= FindTransform(all, "LegLU");
-        legRU ??= FindTransform(all, "LegRU");
-
-        _limbArcs.Clear();
-        var armOffset = new Vector3(armYOffset, 0f, 0f);
-        RegisterArcLimb(torso, armLU, armLD, armAmplitude, 0f, 90f, armOffset);
-        RegisterArcLimb(torso, armRU, armRD, armAmplitude, Mathf.PI, -90f, -armOffset);
-        RegisterArcLimb(pelvis, legLU, legLD, legAmplitude, Mathf.PI, 0f, Vector3.zero);
-        RegisterArcLimb(pelvis, legRU, legRD, legAmplitude, 0f, 0f, Vector3.zero);
-    }
-
-    private Transform FindTransform(Transform[] all, string name)
-    {
-        foreach (var t in all)
+        _lookup.Clear();
+        foreach (var part in parts)
         {
-            if (t != null && string.Equals(t.name, name, StringComparison.OrdinalIgnoreCase))
+            if (part == null || part.body == null || part.Transform == null)
             {
-                return t;
+                continue;
+            }
+
+            if (!_lookup.ContainsKey(part.name))
+            {
+                _lookup.Add(part.name, part);
             }
         }
-
-        return null;
     }
 
-    private void ResetPose()
+    public void CaptureAllOrigins()
     {
-        if (torso != null)
+        foreach (var part in parts)
         {
-            torso.localRotation = _torsoBaseRot;
-        }
-
-        if (pelvis != null)
-        {
-            pelvis.localRotation = _pelvisBaseRot;
-        }
-
-        if (head != null)
-        {
-            head.localPosition = _headBasePos;
-            head.localRotation = _headBaseRot;
-        }
-
-        foreach (var arc in _limbArcs)
-        {
-            arc.Reset();
+            part?.CaptureOrigin();
         }
     }
 
-    public void AlignToBasePoseImmediate()
+    // 삭제 금지: 추후 사용될 수도 있음.
+    // public void ResetTargetsToOrigins()
+    // {
+    //     foreach (var part in parts)
+    //     {
+    //         if (part == null)
+    //         {
+    //             continue;
+    //         }
+
+    //         part.targetLocalPosition = part.originLocalPosition;
+    //         part.targetLocalRotation = part.originLocalRotation;
+    //     }
+    // }
+
+    public void SetTargetPose(string partName, Vector3 localPosition, Quaternion localRotation)
     {
-        ResetPose();
+        if (!_lookup.TryGetValue(partName, out var part) || part == null)
+        {
+            Debug.LogWarning($"BodyAnimator: part '{partName}' not found.");
+            return;
+        }
+
+        part.targetLocalPosition = localPosition;
+        part.targetLocalRotation = localRotation;
     }
 
-    public void StartAnimation(string animationName)
+    public void SnapToTargets() // 즉시 transform 적용.
     {
-        if (!enabled)
+        foreach (var part in parts)
+        {
+            if (part?.Transform == null)
+            {
+                continue;
+            }
+
+            ApplyLocalPose(part, part.targetLocalPosition, part.targetLocalRotation);
+        }
+    }
+
+    public void StartAnimation(string animationName, float duration = -1f)
+    {
+        if (!isActiveAndEnabled)
         {
             return;
         }
 
-        StopCurrentRoutine();
-
-        switch (animationName.ToLowerInvariant())
+        switch (animationName?.ToLowerInvariant())
         {
+            case "idle":
+            case "standing":
+            case "wait":
+                foreach (var partName in new string[] { "Head", "Torso", "Pelvis", "LegLU", "LegRU", "LegLD", "LegRD" })
+                {
+                    var part = _lookup[partName];
+                    part.body.bodyType = RigidbodyType2D.Kinematic;
+                    SetTargetPose(partName, part.originLocalPosition, part.originLocalRotation);
+                    part.body.gravityScale = 0.0f;
+
+                }
+                foreach (var part in parts)
+                {
+                    part.body.GetComponent<BoxCollider2D>().isTrigger = true;
+                }
+                break;
+
             case "walk":
             case "walking":
             case "walkcycle":
+                break;
+
+            case "free":
+            case "freemove":
+            case "explore":
+                StopAnimation();
+                foreach (var part in parts)
+                {
+                    part.body.GetComponent<BoxCollider2D>().isTrigger = false;
+                    part.body.bodyType = RigidbodyType2D.Dynamic; // freebody
+                    part.body.gravityScale = 1.0f;
+                }
+                break;
             
-                _currentRoutine = StartCoroutine(WalkRoutine());
+            case "catch":
+            case "catching":
+            case "receive":
+                break;
+
+            case "throw":
+            case "throwing":
+            case "toss":
                 break;
             default:
                 break;
         }
+
+        Play(duration);
     }
 
     public void StopAnimation()
     {
-        StopCurrentRoutine();
-        ResetPose();
-    }
-
-    private void StopCurrentRoutine()
-    {
-        if (_currentRoutine != null)
+        if (_lerpRoutine != null)
         {
-            StopCoroutine(_currentRoutine);
-            _currentRoutine = null;
+            StopCoroutine(_lerpRoutine);
+            _lerpRoutine = null;
         }
     }
 
-    private IEnumerator WalkRoutine()
+    public void Play(float duration = -1f)
     {
-        float time = 0f;
-
-        while (true)
-        {
-            time += Time.deltaTime * walkFrequency;
-
-            foreach (var arc in _limbArcs)
-            {
-                arc.Apply(time);
-            }
-
-            yield return null;
-        }
-    }
-
-    private void RegisterArcLimb(
-        Transform pivot,
-        Transform primary,
-        Transform secondary,
-        float amplitudeDeg,
-        float phase,
-        float baseOffset = 0f,
-        Vector3 localYOffset = default)
-    {
-        if (pivot == null || primary == null)
+        if (!isActiveAndEnabled)
         {
             return;
         }
 
-        var arc = new LimbArc(pivot, amplitudeDeg, phase, baseOffset);
-        arc.AddSegment(primary, localYOffset);
-        if (secondary != null)
+        if (duration <= 0f)
         {
-            arc.AddSegment(secondary, localYOffset);
+            duration = defaultDuration;
         }
 
-        _limbArcs.Add(arc);
+        if (_lerpRoutine != null)
+        {
+            StopCoroutine(_lerpRoutine);
+        }
+
+        _lerpRoutine = StartCoroutine(LerpToTargets(duration));
     }
 
-    [Serializable]
-    private class LimbArc
+    private IEnumerator LerpToTargets(float duration)
     {
-        private readonly Transform _pivot;
-        private readonly float _amplitude;
-        private readonly float _phase;
-        private readonly Quaternion _baseOffset;
-        private readonly List<SegmentData> _segments = new();
+        var startPos = new Dictionary<BodyPart, Vector3>(parts.Count);
+        var startRot = new Dictionary<BodyPart, Quaternion>(parts.Count);
 
-        public LimbArc(Transform pivot, float amplitude, float phase, float baseOffsetDeg)
+        foreach (var part in parts)
         {
-            _pivot = pivot;
-            _amplitude = amplitude;
-            _phase = phase;
-            _baseOffset = Quaternion.Euler(0f, 0f, baseOffsetDeg);
-        }
-
-        public void AddSegment(Transform target, Vector3 localOffset)
-        {
-            if (target == null || _pivot == null)
+            if (part?.Transform == null)
             {
-                return;
+                continue;
             }
 
-            var pivotRot = _pivot.localRotation;
-            var pivotPos = _pivot.localPosition;
-
-            var relativePos = Quaternion.Inverse(pivotRot) * (target.localPosition - pivotPos) + localOffset;
-            var relativeRot = Quaternion.Inverse(pivotRot) * target.localRotation;
-
-            _segments.Add(new SegmentData(target, relativePos, relativeRot));
+            startPos[part] = part.Transform.localPosition;
+            startRot[part] = part.Transform.localRotation;
         }
 
-        public void Reset()
+        float elapsed = 0f;
+        while (elapsed < duration)
         {
-            if (_pivot == null)
-            {
-                return;
-            }
+            float t = elapsed / duration;
+            float eased = easingCurve.Evaluate(t);
 
-            var pivotRot = _pivot.localRotation;
-            var pivotPos = _pivot.localPosition;
-
-            foreach (var segment in _segments)
+            foreach (var part in parts)
             {
-                if (segment.Target == null)
+                if (part == null || part.Transform == null || !startPos.ContainsKey(part))
                 {
                     continue;
                 }
 
-                segment.Target.localPosition = pivotPos + pivotRot * segment.RelPos;
-                segment.Target.localRotation = pivotRot * segment.RelRot;
+                Vector3 pos = Vector3.Lerp(startPos[part], part.targetLocalPosition, eased);
+                Quaternion rot = Quaternion.Slerp(startRot[part], part.targetLocalRotation, eased);
+                ApplyLocalPose(part, pos, rot);
             }
+
+            elapsed += Time.deltaTime;
+            yield return null;
         }
 
-        public void Apply(float time)
+        foreach (var part in parts)
         {
-            if (_pivot == null)
+            if (part == null || part.Transform == null)
             {
-                return;
+                continue;
             }
 
-            float angle = Mathf.Sin(time + _phase) * _amplitude;
-            var arcRotation = _baseOffset * Quaternion.Euler(0f, 0f, angle);
-            var pivotRot = _pivot.localRotation;
-            var pivotPos = _pivot.localPosition;
-
-            foreach (var segment in _segments)
-            {
-                if (segment.Target == null)
-                {
-                    continue;
-                }
-
-                var rotatedOffset = arcRotation * segment.RelPos;
-                var rotatedRot = arcRotation * segment.RelRot;
-
-                segment.Target.localPosition = pivotPos + pivotRot * rotatedOffset;
-                segment.Target.localRotation = pivotRot * rotatedRot;
-            }
+            ApplyLocalPose(part, part.targetLocalPosition, part.targetLocalRotation);
         }
 
-        private readonly struct SegmentData
+        _lerpRoutine = null;
+    }
+
+    private void ApplyLocalPose(BodyPart part, Vector3 localPosition, Quaternion localRotation)
+    {
+        if (part.body == null || part.Transform == null)
         {
-            public readonly Transform Target;
-            public readonly Vector3 RelPos;
-            public readonly Quaternion RelRot;
-
-            public SegmentData(Transform target, Vector3 relPos, Quaternion relRot)
-            {
-                Target = target;
-                RelPos = relPos;
-                RelRot = relRot;
-            }
+            return;
         }
+
+        var parent = part.Transform.parent;
+        if (parent == null)
+        {
+            part.body.MovePosition(localPosition);
+            part.body.MoveRotation(localRotation.eulerAngles.z);
+            part.Transform.localPosition = localPosition;
+            part.Transform.localRotation = localRotation;
+            return;
+        }
+
+        Vector3 worldPosition = parent.TransformPoint(localPosition);
+        Quaternion worldRotation = parent.rotation * localRotation;
+
+        part.body.MovePosition(worldPosition);
+        part.body.MoveRotation(worldRotation.eulerAngles.z);
+
+        part.Transform.localPosition = localPosition;
+        part.Transform.localRotation = localRotation;
     }
 }

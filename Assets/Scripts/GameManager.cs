@@ -214,6 +214,18 @@ public class GameManager : MonoBehaviour
                     {
                         // (래그돌 자식 콜라이더 등이 감지된 경우)
                         Debug.LogWarning($"[GameManager] Found collider '{hit.gameObject.name}' but it has no Body.cs script.");
+                        var ancestor = hit.transform.parent;
+                        var hitScene = hit.gameObject.scene;
+                        while (ancestor != null && ancestor.gameObject.scene == hitScene)
+                        {
+                            if (ancestor.TryGetComponent(out Body ancestorBody))
+                            {
+                                results.Add(ancestorBody);
+                                break;
+                            }
+
+                            ancestor = ancestor.parent;
+                        }
                     }
                 }
                 else // multi == false 로직 (R키 부활 시)

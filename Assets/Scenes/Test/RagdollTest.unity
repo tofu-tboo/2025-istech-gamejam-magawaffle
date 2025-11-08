@@ -293,7 +293,7 @@ GameObject:
   - component: {fileID: 282342096}
   - component: {fileID: 282342095}
   m_Layer: 0
-  m_Name: Square
+  m_Name: chain
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -506,7 +506,7 @@ GameObject:
   - component: {fileID: 1549861236}
   - component: {fileID: 1549861235}
   m_Layer: 0
-  m_Name: Square (2)
+  m_Name: chain3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -648,7 +648,7 @@ GameObject:
   - component: {fileID: 1820949128}
   - component: {fileID: 1820949129}
   m_Layer: 0
-  m_Name: Square (3)
+  m_Name: chain2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -662,7 +662,7 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1820949127}
-  m_BodyType: 0
+  m_BodyType: 1
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
