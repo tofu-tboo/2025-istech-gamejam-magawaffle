@@ -189,12 +189,8 @@ public class Character : MonoBehaviour
     {
         if (currentBody != null)
         {
-<<<<<<< HEAD
             currentBody.state = BodyState.undead; 
             currentBody.SetLayerRecursively(bodyLayerIndex); 
-=======
-            currentBody.state = BodyState.undead; // 레이어 자동 변경
->>>>>>> 0c33d9f73285df21c04f9bbf6b07007074814cbb
             currentBody = null;
         }
         BecomeGhost();
@@ -314,23 +310,7 @@ public class Character : MonoBehaviour
         
         bodyRb.bodyType = RigidbodyType2D.Dynamic; 
         bodyRb.gravityScale = gravityScale;
-        
-<<<<<<< HEAD
-        currentBody.state = BodyState.playing;
-        currentBody.SetLayerRecursively(playerLayerIndex);
-=======
-        // 5. Body 상태 및 레이어 설정
-        // (GameManager가 이미 playing으로 설정했더라도, 재빙의 시 필요)
-        currentBody.state = BodyState.idle; // 자동으로 하위 오브젝트들의 레이어 설정.
->>>>>>> 0c33d9f73285df21c04f9bbf6b07007074814cbb
 
-        transform.position = currentBody.transform.position;
-<<<<<<< HEAD
-=======
-
-        // [삭제] SetParent 제거
-        // currentBody.transform.SetParent(this.transform, true);
-        // currentBody.transform.localPosition = Vector3.zero;
->>>>>>> 0c33d9f73285df21c04f9bbf6b07007074814cbb
+        currentBody.state = BodyState.idle; 
     }
 }
