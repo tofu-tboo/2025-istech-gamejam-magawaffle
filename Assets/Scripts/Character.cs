@@ -199,11 +199,7 @@ public class Character : MonoBehaviour
     {
         if (currentBody != null)
         {
-            currentBody.state = BodyState.undead; 
-            // [수정] 아래 한 줄을 교체합니다.
-            // currentBody.gameObject.layer = bodyLayerIndex; 
-            currentBody.SetLayerRecursively(bodyLayerIndex); // Body와 모든 자식(래그돌)의 레이어를 변경
-            
+            currentBody.state = BodyState.undead;             
             currentBody = null;
         }
         BecomeGhost();
@@ -218,8 +214,6 @@ public class Character : MonoBehaviour
         {
             // [수정] 부모-자식 관계가 아니므로 SetParent 필요 없음
             currentBody.state = BodyState.dead; 
-            // currentBody.gameObject.layer = bodyLayerIndex; 
-            currentBody.SetLayerRecursively(bodyLayerIndex); // Body와 모든 자식(래그돌)의 레이어를 변경
             currentBody = null;
         }
         BecomeGhost();
@@ -335,8 +329,6 @@ public class Character : MonoBehaviour
         // 5. Body 상태 및 레이어 설정
         // (GameManager가 이미 playing으로 설정했더라도, 재빙의 시 필요)
         currentBody.state = BodyState.playing;
-        // [지난번 수정] SetLayerRecursively가 이미 적용되어 있어야 합니다.
-        currentBody.SetLayerRecursively(playerLayerIndex);
         
         // 4. Body의 Rigidbody에 플레이어 설정 적용
         // [핵심 수정 2] Body가 Kinematic(래그돌 해제) 상태일 수 있으므로
@@ -347,9 +339,5 @@ public class Character : MonoBehaviour
 
         // 6. Character 위치를 Body 위치로 즉시 동기화
         transform.position = currentBody.transform.position;
-        
-        // [삭제] SetParent 제거
-        // currentBody.transform.SetParent(this.transform, true);
-        // currentBody.transform.localPosition = Vector3.zero;
     }
 }
