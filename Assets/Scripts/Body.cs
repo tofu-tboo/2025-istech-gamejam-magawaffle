@@ -142,9 +142,12 @@ public class Body : MonoBehaviour
             case BodyState.undead:
                 isPlaying = false;
                 animator?.StartAnimation("free");
-                break;
+                break;            
             case BodyState.dead:
-                if (_state == BodyState.undead) // 새 Body 요청
+                // [핵심 수정]
+                // 'undead' 뿐만 아니라 'playing' 상태(isPlaying)에서
+                // 'dead'가 될 때도 새 Body를 스폰하도록 조건을 변경합니다.
+                if (isPlaying || _state == BodyState.undead) 
                 {
                     if (GameManager.Instance != null)
                     {
@@ -292,19 +295,35 @@ public class Body : MonoBehaviour
             return;
         }
 
-        // 충돌한 오브젝트가 "Obstacle" 태그를 가졌는지 확인
+        // --- 1. Obstacle 충돌 (기존 로직) ---
         if (collision.gameObject.CompareTag("Obstacle"))
         {
             Debug.Log("Body가 Obstacle과 충돌했습니다. 'dead' 상태가 됩니다.");
-            
-            // 'E' 키를 누른 것처럼 'dead' 상태로 변경
-            // 이 상태 변경은 즉시 ApplyState(dead)를 호출하여 래그돌로 만들고
-            // 레이어를 'Body'로 변경합니다.
-            this.state = BodyState.dead;
+            this.state = BodyState.dead; // ApplyState(dead)를 호출
+            return; 
+        }
+
+        // --- 2. PistonPress 충돌 (수정된 로직) ---
+        if (collision.gameObject.CompareTag("PistonPress"))
+        {
+            // [수정] 2-1. 'playing' (빙의) 상태일 때 -> 소멸
+            if (_state != BodyState.dead)
+            {
+                Debug.Log("Body가 PistonPress와 충돌. '소멸'합니다.");
+                    
+                if (GameManager.Instance != null && GameManager.Instance.playerSoul != null)
+                {
+                    GameManager.Instance.playerSoul.HandleBodyDestruction();
+                }
+
+                if (GameManager.Instance != null)
+                {
+                    GameManager.Instance.SpawnNewUndeadBody();
+                }
+                
+                Destroy(gameObject);
+            }
+            return; 
         }
     }
-
-
-
-
 }

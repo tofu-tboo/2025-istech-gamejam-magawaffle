@@ -133,15 +133,6 @@ public class Character : MonoBehaviour
             // 장애물 충돌 등으로 Body가 'dead' 상태가 되었는지 확인
             if (currentBody.state == BodyState.dead)
             {
-                // 'E' 키(KillCurrentBody)의 후반부 로직을 실행합니다.
-                // (state 변경, 레이어 변경은 Body.cs가 이미 처리함)
-
-                // 1. 새 Body 스폰 요청
-                if (GameManager.Instance != null)
-                {
-                    GameManager.Instance.SpawnNewUndeadBody();
-                }
-
                 // 2. 고스트로 전환
                 BecomeGhost();
                 return; // 물리 제어를 중단합니다.
@@ -312,7 +303,7 @@ public class Character : MonoBehaviour
         rb.linearVelocity = Vector2.zero;
 
         // 2. Character의 Collider 비활성화 (Trigger지만 꺼두는 것이 안전)
-        col.enabled = false; 
+        col.enabled = false;
 
         gameObject.layer = playerLayerIndex;
         jumpRequested = false;
@@ -330,9 +321,9 @@ public class Character : MonoBehaviour
         // 4. Body의 Rigidbody에 플레이어 설정 적용
         // [핵심 수정 2] Body가 Kinematic(래그돌 해제) 상태일 수 있으므로
         // 물리 제어를 위해 반드시 Dynamic으로 설정합니다
-        bodyRb.bodyType = RigidbodyType2D.Dynamic; 
+        bodyRb.bodyType = RigidbodyType2D.Dynamic;
         bodyRb.gravityScale = gravityScale;
-        
+
         // 5. Body 상태 및 레이어 설정
         // (GameManager가 이미 playing으로 설정했더라도, 재빙의 시 필요)
         currentBody.state = BodyState.idle; // 자동으로 하위 오브젝트들의 레이어 설정.
@@ -343,5 +334,19 @@ public class Character : MonoBehaviour
         // [삭제] SetParent 제거
         // currentBody.transform.SetParent(this.transform, true);
         // currentBody.transform.localPosition = Vector3.zero;
+    }
+    
+    /// <summary>
+    /// Body가 '소멸'될 때(예: 피스톤) 호출됩니다.
+    /// currentBody에 접근하지 않고 즉시 고스트 상태로 전환합니다.
+    /// </summary>
+    public void HandleBodyDestruction()
+    {
+        Debug.Log("Body가 소멸되어 강제로 고스트가 됩니다.");
+        
+        // private인 BecomeGhost() 함수를 호출하여
+        // currentBody = null, bodyRb = null 등을 처리하고
+        // 고스트 물리 상태로 전환합니다.
+        BecomeGhost();
     }
 }
