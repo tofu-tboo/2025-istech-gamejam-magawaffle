@@ -1,4 +1,6 @@
+using System;
 using Unity.Burst.Intrinsics;
+using UnityEditor.UI;
 using UnityEngine;
 
 public enum CharacterState
@@ -20,6 +22,8 @@ public class Character : MonoBehaviour
     public KeyCode jumpKey = KeyCode.Space;
 
     [Header("Game Settings")]
+    public CharacterState state = CharacterState.moving;
+
     [Header("Movement Settings")]
     [SerializeField] private float maxSpeed = 3f;
     [SerializeField] private float acclerationForce = 100f;
@@ -30,15 +34,23 @@ public class Character : MonoBehaviour
     [SerializeField] private float jumpForce = 20f;
     [SerializeField] private float gravityScale = 3f;
 
+    [Header("Layer Settings")]
+    [SerializeField] private LayerMask groundLayer;
+    [SerializeField] private Transform groundCheck;
+    [SerializeField] private float groundCheckDistance = 0.1f;
+
     private Rigidbody2D rb;
     private Vector2 movingDirection;
     private bool isGrounded;
     private bool jumpRequested;
-    public CharacterState state = CharacterState.moving;
+    private int playerLayerIndex;
+    private int ghostLayerIndex;
     
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+        playerLayerIndex = LayerMask.NameToLayer("Player");
+        ghostLayerIndex = LayerMask.NameToLayer("Ghost");
     }
 
     void Start()
@@ -60,9 +72,14 @@ public class Character : MonoBehaviour
                 movingDirection += Vector2.right;
             }
 
-            if (Input.GetKeyDown(jumpKey)) //&& isGrounded)
+            if (Input.GetKeyDown(jumpKey) && isGrounded)
             {
                 jumpRequested = true;
+            }
+
+            if (Input.GetKeyDown(KeyCode.P))
+            {
+                ChangeState(CharacterState.ghost);
             }
         }
         else if (state == CharacterState.ghost)
@@ -83,11 +100,18 @@ public class Character : MonoBehaviour
             {
                 movingDirection += Vector2.right;
             }
+
+            if (Input.GetKeyDown(KeyCode.P))
+            {
+                ChangeState(CharacterState.moving);
+            }
         }
     }
 
     void FixedUpdate()
     {
+        CheckGround();
+
         if (state == CharacterState.moving)
         {
             rb.gravityScale = gravityScale;
@@ -109,6 +133,25 @@ public class Character : MonoBehaviour
             {
                 rb.linearVelocity = rb.linearVelocity.normalized * maxGhostSpeed;
             }
+        }
+    }
+
+    void CheckGround()
+    {
+        isGrounded = Physics2D.Raycast(groundCheck.position, Vector2.down, groundCheckDistance, groundLayer);
+        Debug.DrawRay(groundCheck.position, Vector2.down * groundCheckDistance, Color.red);
+    }
+
+    void ChangeState(CharacterState newState)
+    {
+        state = newState;
+        if (state == CharacterState.moving)
+        {
+            gameObject.layer = playerLayerIndex;
+        }
+        else if (state == CharacterState.ghost)
+        {
+            gameObject.layer = ghostLayerIndex;
         }
     }
 }
