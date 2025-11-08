@@ -183,7 +183,7 @@ public class Character : MonoBehaviour
             currentBody.state = BodyState.dead; 
             currentBody.gameObject.layer = bodyLayerIndex; 
             currentBody = null;
-            bodyRb = null; // 캐시 해제
+            bodyRb = null;
         }
         BecomeGhost();
 
