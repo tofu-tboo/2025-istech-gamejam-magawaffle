@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 1c647a2e345165041b5eec73d977489b
+guid: f5377a575cd2c9240876ae8522628340
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 7229370457887853432
-    second: Isttechpress-Photoroom_0
+      213: 1547406243525252255
+    second: Isttechpress-Photoroom 1_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,23 +100,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Isttechpress-Photoroom_0
+      name: Isttechpress-Photoroom 1_0
       rect:
         serializedVersion: 2
-        x: 169
-        y: 111
+        x: 170
+        y: 113
         width: 678
-        height: 913
+        height: 610
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 87bcb1ce022e35460800000000000000
-      internalID: 7229370457887853432
+      spriteID: f945b8ca7cd797510800000000000000
+      internalID: 1547406243525252255
       vertices: []
       indices: 
       edges: []
@@ -125,7 +125,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 071a547e3e28d814abafeb14021da1c3
     internalID: 0
     vertices: []
     indices: 
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Isttechpress-Photoroom_0: 7229370457887853432
+      Isttechpress-Photoroom 1_0: 1547406243525252255
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
