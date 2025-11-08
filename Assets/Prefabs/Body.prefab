@@ -1353,8 +1353,8 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 8882301070074716384}
   - {fileID: 2039299858146974220}
@@ -1573,6 +1573,7 @@ MonoBehaviour:
     m_Bits: 192
   groundCheck: {fileID: 174123158115525582}
   groundCheckDistance: 2
+  springLaunchForce: 25
 --- !u!1 &5341462828639113535
 GameObject:
   m_ObjectHideFlags: 0
