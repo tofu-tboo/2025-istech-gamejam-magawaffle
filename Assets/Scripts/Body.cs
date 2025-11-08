@@ -184,33 +184,22 @@ public class Body : MonoBehaviour
             SetLayerRecursively(bodyLayerIndex);
         }
 
-        ToggleSystems(isPlaying);
         ToggleBodyPhysics(!isPlaying);
-    }
-
-    private void ToggleSystems(bool enable)
-    {
-        // LocomotionBody
-        if (locomotionBody != null)
-        {
-            // [핵심 수정 3] 'playing' 상태(enable=true)일 때 Rigidbody를 활성화해야
-            // Character가 제어할 수 있습니다.
-            locomotionBody.freezeRotation = enable;
-            
-        }
     }
 
     private void ToggleBodyPhysics(bool enable) // enable 여부에 따라서 흐느적거림 조정.
     {
-        // [핵심 수정 1] 래그돌 자식이 없는 '단순 Body' (Square 등) 처리
-        if (GetComponentsInChildren<Rigidbody2D>(true).Count() == 0 && locomotionBody != null)
+        if (locomotionBody != null)
         {
             if (enable) // Dynamic (undead/dead) => 흐느적거림
             {
-                locomotionBody.bodyType = RigidbodyType2D.Dynamic;
+                // locomotionBody.bodyType = RigidbodyType2D.Dynamic;
                 // locomotionBody.gravityScale = ragdollGravityScale;
                 locomotionBody.linearDamping = ragdollLinearDrag;
                 locomotionBody.angularDamping = ragdollAngularDrag;
+
+                locomotionBody.GetComponent<BoxCollider2D>().isTrigger = true;
+                locomotionBody.simulated = false;
 
                 // ToggleSystems(false)가 껐던 시뮬레이션을
                 // 래그돌 물리(감지)를 위해 다시 켭니다.
@@ -220,11 +209,14 @@ public class Body : MonoBehaviour
                 // 'playing' 상태로 돌아갈 때.
                 // Character.cs가 PossessBody에서 Dynamic으로 바꿀 것이므로
                 // 여기서는 Kinematic으로만 둡니다. (애니메이션 제어용)
-                locomotionBody.bodyType = RigidbodyType2D.Kinematic;
+                // locomotionBody.bodyType = RigidbodyType2D.Kinematic;
                 locomotionBody.linearVelocity = Vector2.zero;
                 locomotionBody.angularVelocity = 0f;
 
+                locomotionBody.GetComponent<BoxCollider2D>().isTrigger = false;
+                locomotionBody.simulated = true;
             }
+
         }
 
     }
@@ -257,20 +249,6 @@ public class Body : MonoBehaviour
     public bool IsGrounded()
     {
         return isGrounded;
-    }
-
-    public void PlayLocomotionAnimation()
-    {
-        if (!string.IsNullOrEmpty(locomotionStateName))
-        {
-            animator?.StartAnimation(locomotionStateName);
-        }
-    }
-
-    public void StopAnimations()
-    {
-        animator?.StopAnimation();
-        animator?.AlignToBasePoseImmediate();
     }
 
     /// <summary>
