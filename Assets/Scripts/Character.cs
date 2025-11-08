@@ -119,12 +119,33 @@ public class Character : MonoBehaviour
     {
         if (state == CharacterState.moving)
         {
-            // [삭제] Character의 CheckGround() 호출 삭제
+            // [수정]
+            // Q(ReleaseBody)로 인해 currentBody가 null이 되거나
+            // 장애물 충돌로 bodyRb가 null이 될 수 있음
+            if (currentBody == null || bodyRb == null) 
+            {
+                BecomeGhost(); // 안전장치
+                return;
+            }
 
-            // [핵심 수정]
-            // 모든 물리 제어를 'rb' (자신)가 아닌 'bodyRb' (Body)에 적용
-            if (bodyRb == null) return; 
+            // [핵심 추가]
+            // 장애물 충돌 등으로 Body가 'dead' 상태가 되었는지 확인
+            if (currentBody.state == BodyState.dead)
+            {
+                // 'E' 키(KillCurrentBody)의 후반부 로직을 실행합니다.
+                // (state 변경, 레이어 변경은 Body.cs가 이미 처리함)
 
+                // 1. 새 Body 스폰 요청
+                if (GameManager.Instance != null)
+                {
+                    GameManager.Instance.SpawnNewUndeadBody();
+                }
+
+                // 2. 고스트로 전환
+                BecomeGhost();
+                return; // 물리 제어를 중단합니다.
+            }
+            
             if (movetype == MovementType.instant)
             {
                 bodyRb.linearVelocity = new Vector2(movingDirection.normalized.x * instantSpeed, bodyRb.linearVelocity.y);
