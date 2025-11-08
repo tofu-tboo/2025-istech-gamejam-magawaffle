@@ -1,5 +1,6 @@
 using UnityEngine;
-using System.Collections.Generic; // 리스트 사용을 위해 필수
+using System.Collections.Generic;
+using System; // 리스트 사용을 위해 필수
 
 public class GameManager : MonoBehaviour
 {
@@ -134,12 +135,6 @@ public class GameManager : MonoBehaviour
         }
         activeBodies.Clear();
 
-        // Character(영혼)의 감지 리스트 등 내부 상태도 리셋
-        if (playerSoul != null)
-        {
-            playerSoul.ResetGhostState();
-        }
-
         // 플레이어에게 새 'Body'를 주며 리셋
         HandleResurrection();
     }
@@ -176,6 +171,10 @@ public class GameManager : MonoBehaviour
     public List<Body> GetOverlapped(Vector2 globalPosition, float range, bool multi = false)
     {
         var circleHits = Physics2D.OverlapCircleAll(globalPosition, range, _bodyLayerMask);
+        
+        // [디버그 1] 몇 개의 '콜라이더'를 찾았는지 확인
+        Debug.Log($"[GameManager] OverlapCircleAll found {circleHits.Length} colliders on 'Body' layer.");
+
         var results = new List<Body>(multi ? circleHits.Length : 1);
         float closestSqrDist = float.MaxValue;
         Body closest = null;
@@ -184,17 +183,33 @@ public class GameManager : MonoBehaviour
         {
             if (hit != null)
             {
+                // [수정] 콜라이더에서 Body 컴포넌트를 먼저 가져옵니다.
+                Body body = hit.gameObject.GetComponent<Body>();
+
                 if (multi)
                 {
-                    results.Add(hit.gameObject.GetComponent<Body>());
-                }
-                else
-                {
-                    var sqrDist = ((Vector2)hit.transform.position - globalPosition).sqrMagnitude;
-                    if (sqrDist < closestSqrDist)
+                    // [수정] body가 null이 아닌 경우에만 리스트에 추가합니다.
+                    if (body != null)
                     {
-                        closestSqrDist = sqrDist;
-                        closest = hit.gameObject.GetComponent<Body>();
+                        results.Add(body);
+                    }
+                    else
+                    {
+                        // (래그돌 자식 콜라이더 등이 감지된 경우)
+                        Debug.LogWarning($"[GameManager] Found collider '{hit.gameObject.name}' but it has no Body.cs script.");
+                    }
+                }
+                else // multi == false 로직 (R키 부활 시)
+                {
+                    // [수정] body가 null이 아닌 경우에만
+                    if (body != null)
+                    {
+                        var sqrDist = ((Vector2)hit.transform.position - globalPosition).sqrMagnitude;
+                        if (sqrDist < closestSqrDist)
+                        {
+                            closestSqrDist = sqrDist;
+                            closest = body;
+                        }
                     }
                 }
             }
@@ -205,6 +220,9 @@ public class GameManager : MonoBehaviour
             results.Add(closest);
         }
 
+        // [디버그 2] 몇 개의 'Body 스크립트'를 찾았는지 확인 (이것이 "2"에서 "1"로 바뀔 것입니다)
+        Debug.Log($"[GameManager] Returning {results.Count} valid bodies.");
+        
         return results;
     }
 }

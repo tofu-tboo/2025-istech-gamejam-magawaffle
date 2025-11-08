@@ -43,17 +43,19 @@ public class Body : MonoBehaviour
     private readonly List<Joint2D> _ragdollJoints = new();
     private readonly HashSet<Rigidbody2D> _bodyLookup = new();
     private BodyState _appliedState = (BodyState)(-1);
-    [Header("Movement Settings")]
+    
+    [Header("Movement Settings")] // (헤더 순서 변경)
 
     [Header("Layer Settings")]
     [SerializeField] private LayerMask groundLayer;
     [SerializeField] private Transform groundCheck;
     [SerializeField] private float groundCheckDistance = 0.1f;
 
-    private Rigidbody2D rb;
+    private Rigidbody2D rb; // 이 변수는 초기화되지 않아 사용되지 않음
     private bool isGrounded;
     
-    public Rigidbody2D Rb => rb; // Character가 Rigidbody에 접근 가능
+    // [핵심 수정 1] Rb 속성이 'locomotionBody'를 반환하도록 수정
+    public Rigidbody2D Rb => locomotionBody;
 
 
     private void Awake()
@@ -71,6 +73,16 @@ public class Body : MonoBehaviour
     private void Update()
     {
         ApplyState(_state);
+    }
+
+    // [핵심 수정 2] Body가 스스로 지면을 검사하도록 FixedUpdate 추가
+    private void FixedUpdate()
+    {
+        // 'playing' 상태일 때만 지면 검사 (undead/dead는 래그돌)
+        if (_appliedState == BodyState.playing)
+        {
+            CheckGround();
+        }
     }
 
     private void CacheReferences()
@@ -153,9 +165,11 @@ public class Body : MonoBehaviour
         // LocomotionBody
         if (locomotionBody != null)
         {
-            // 이동 시에는 물리 적용 X
-            locomotionBody.simulated = enable;
-            if (!enable)
+            // [핵심 수정 3] 'playing' 상태(enable=true)일 때 Rigidbody를 활성화해야
+            // Character가 제어할 수 있습니다.
+            locomotionBody.simulated = enable; 
+
+            if (!enable) // undead 또는 dead 상태일 때만 속도 초기화
             {
                 locomotionBody.linearVelocity = Vector2.zero;
                 locomotionBody.angularVelocity = 0f;
@@ -163,16 +177,7 @@ public class Body : MonoBehaviour
         }
 
         // // Etc
-        // if (gameplayBehaviours != null)
-        // {
-        //     foreach (var behaviour in gameplayBehaviours)
-        //     {
-        //         if (behaviour != null)
-        //         {
-        //             behaviour.enabled = enable;
-        //         }
-        //     }
-        // }
+        // (주석 처리된 코드 동일)
     }
 
     private void ToggleRagdoll(bool enable) // enable 여부에 따라서 흐느적거림 조정.
