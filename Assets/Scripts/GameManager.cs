@@ -25,6 +25,15 @@ public class GameManager : MonoBehaviour
     private List<GameObject> activeBodies = new List<GameObject>();
     [SerializeField] private string bodyLayerName = "Body";
     private int _bodyLayerMask = ~0;
+    
+    // [추가] 전체 Body 스폰 횟수 추적 변수
+    private int _totalBodiesSpawned = 0;
+
+    /// <summary>
+    /// [추가] 전체 게임에서 Body가 생성된 총 횟수입니다.
+    /// </summary>
+    public int TotalBodiesSpawned => _totalBodiesSpawned;
+
 
     void Awake()
     {
@@ -82,6 +91,10 @@ public class GameManager : MonoBehaviour
         Debug.Log("영혼: 리스폰 지점에 새 육체를 생성하고 빙의합니다.");
 
         GameObject newBodyObj = Instantiate(bodyPrefab, respawnPoint.position, respawnPoint.rotation);
+        
+        // [추가] Body 생성 횟수 증가
+        _totalBodiesSpawned++;
+
         Body newBody = newBodyObj.GetComponent<Body>();
 
         if (newBody != null)
@@ -107,6 +120,10 @@ public class GameManager : MonoBehaviour
         Debug.Log("GameManager: 'dead' 알림 수신. 새 'undead' Body를 리스폰합니다.");
 
         GameObject newBodyObj = Instantiate(bodyPrefab, respawnPoint.position, respawnPoint.rotation);
+        
+        // [추가] Body 생성 횟수 증가
+        _totalBodiesSpawned++;
+
         Body newBody = newBodyObj.GetComponent<Body>();
 
         if (newBody != null)
