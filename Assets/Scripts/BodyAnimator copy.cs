@@ -7,7 +7,7 @@ using UnityEngine;
 /// Procedural animator that swings arms/legs around their attachment pivots (Torso/Pelvis)
 /// while every limb rigidbody remains kinematic. Used only in BodyState.playing.
 /// </summary>
-public class BodyAnimator2 : MonoBehaviour
+public class BodyAnimator : MonoBehaviour
 {
     [Header("Core Transforms")]
     [SerializeField] private Transform torso;
@@ -32,6 +32,12 @@ public class BodyAnimator2 : MonoBehaviour
     [SerializeField] private float walkFrequency = 4f;
     [SerializeField] private float armYOffset = 0.15f;
 
+
+    private readonly List<Rigidbody2D> _ragdollBodies = new();
+    private readonly List<Collider2D> _ragdollColliders = new();
+    // private readonly List<Joint2D> _ragdollJoints = new();
+    private readonly HashSet<Rigidbody2D> _bodyLookup = new();
+
     private readonly List<LimbArc> _limbArcs = new();
     private Quaternion _torsoBaseRot;
     private Quaternion _pelvisBaseRot;
@@ -46,6 +52,30 @@ public class BodyAnimator2 : MonoBehaviour
         _pelvisBaseRot = pelvis != null ? pelvis.localRotation : Quaternion.identity;
         _headBasePos = head != null ? head.localPosition : new Vector3(0f, 1.4f, 0f);
         _headBaseRot = head != null ? head.localRotation : Quaternion.identity;
+
+
+        // ***Assign Ragdoll***
+        _ragdollBodies.Clear();
+        _ragdollColliders.Clear();
+        _bodyLookup.Clear();
+
+        // Assign Rigidbodies
+        var bodies = GetComponentsInChildren<Rigidbody2D>(true);
+        foreach (var body in bodies)
+        {
+            _ragdollBodies.Add(body);
+            _bodyLookup.Add(body);
+        }
+
+        // Assign Colliders
+        foreach (var collider in GetComponentsInChildren<Collider2D>(true))
+        {
+            if (collider.attachedRigidbody != null && _bodyLookup.Contains(collider.attachedRigidbody))
+            {
+                _ragdollColliders.Add(collider);
+            }
+        }
+
     }
 
     private void OnEnable()
@@ -122,6 +152,59 @@ public class BodyAnimator2 : MonoBehaviour
 
     public void StartAnimation(string animationName)
     {
+        // if (animator != null)
+        // {
+        //     animator.enabled = enable;
+
+        //     if (!enable)
+        //     {
+        //         animator.StopAnimation();
+        //     }
+        //     else
+        //     {
+        //         animator.AlignToBasePoseImmediate();
+        //         if (autoPlayAnimatorState && !string.IsNullOrEmpty(locomotionStateName))
+        //         {
+        //             animator.StartAnimation(locomotionStateName);
+        //         }
+        //     }
+        // }
+
+        // enable == !isPlaying
+        // foreach (var body in _ragdollBodies)
+        // {
+        //     if (body == null)
+        //     {
+        //         continue;
+        //     }
+
+        //     body.bodyType = enable ? RigidbodyType2D.Dynamic : RigidbodyType2D.Kinematic;
+        //     // body.gravityScale = enable ? ragdollGravityScale : 0f;
+        //     body.linearDamping = enable ? ragdollLinearDrag : 0f;
+        //     body.angularDamping = enable ? ragdollAngularDrag : 0f;
+        //     body.simulated = true;
+        // }
+
+        // foreach (var collider in _ragdollColliders)
+        // {
+        //     if (collider == null)
+        //     {
+        //         continue;
+        //     }
+
+        //     collider.enabled = enable;
+        //     collider.isTrigger = !enable;
+        // }
+
+        // foreach (var joint in _ragdollJoints)
+        // {
+        //     if (joint == null)
+        //     {
+        //         continue;
+        //     }
+
+        //     joint.enabled = enable;
+        // }
         if (!enabled)
         {
             return;

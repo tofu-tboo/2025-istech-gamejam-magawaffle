@@ -342,7 +342,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerSoul: {fileID: 1783092188}
-  bodyPrefab: {fileID: 4730695849335923048, guid: ce88c61169c6f2f4f90d34391ad2aaa8, type: 3}
+  bodyPrefab: {fileID: 3307618680378231483, guid: cd65825aca8781c4d8d6b12f064fc320, type: 3}
   respawnPoint: {fileID: 1317081929}
   resurrectKey: 114
   mainDoor: {fileID: 0}
