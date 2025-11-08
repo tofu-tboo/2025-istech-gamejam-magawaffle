@@ -8,6 +8,8 @@ TagManager:
   - Obstacle
   - Techtaser
   - Capsule
+  - PistonPress
+  - Spring
   layers:
   - Default
   - TransparentFX

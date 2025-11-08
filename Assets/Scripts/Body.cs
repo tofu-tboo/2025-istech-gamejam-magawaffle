@@ -54,6 +54,9 @@ public class Body : MonoBehaviour
     [SerializeField] private LayerMask groundLayer;
     [SerializeField] private Transform groundCheck;
     [SerializeField] private float groundCheckDistance = 0.1f;
+    [Header("Interaction Settings")]
+    [Tooltip("스프링과 충돌 시 받을 수직 방향의 힘")]
+    [SerializeField] private float springLaunchForce = 25f;
     private LayerMask combinedGroundCheckLayer;
     private bool isGrounded = false;
     private int playerLayerIndex;
@@ -327,6 +330,22 @@ public class Body : MonoBehaviour
                 Destroy(gameObject);
             }
             return;
+        }
+                if (collision.gameObject.CompareTag("Spring"))
+        {
+            // 'playing' (빙의) 상태이고, locomotionBody가 할당되었을 때만 작동
+            if (isPlaying && locomotionBody != null)
+            {
+                Debug.Log("Body가 Spring과 충돌! 위로 쏩니다.");
+
+                // '뿅' 하고 튀어 오르는 효과를 위해 Impulse(충격량) 모드로 힘을 가합니다.
+                // 기존 속도를 무시하고 즉시 힘을 적용하기 위해 y 속도를 0으로 리셋 (선택 사항)
+                locomotionBody.linearVelocity = new Vector2(locomotionBody.linearVelocity.x, 0f);
+                
+                // 위쪽으로 힘 적용
+                locomotionBody.AddForce(Vector2.up * springLaunchForce, ForceMode2D.Impulse);
+            }
+            return; // 충돌 처리 완료
         }
     }
     private void OnTriggerEnter2D(Collider2D other)
