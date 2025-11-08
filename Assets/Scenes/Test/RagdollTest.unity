@@ -396,6 +396,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!50 &389399792 stripped
+Rigidbody2D:
+  m_CorrespondingSourceObject: {fileID: 3946106167697674192, guid: ce88c61169c6f2f4f90d34391ad2aaa8, type: 3}
+  m_PrefabInstance: {fileID: 5618506229928390797}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1014103040
 GameObject:
   m_ObjectHideFlags: 0
@@ -820,6 +825,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 410373385162012715, guid: ce88c61169c6f2f4f90d34391ad2aaa8, type: 3}
+      propertyPath: locomotionBody
+      value: 
+      objectReference: {fileID: 389399792}
     - target: {fileID: 4730695849335923048, guid: ce88c61169c6f2f4f90d34391ad2aaa8, type: 3}
       propertyPath: m_Name
       value: Body

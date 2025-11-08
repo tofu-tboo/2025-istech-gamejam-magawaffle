@@ -136,6 +136,20 @@ public class Body : MonoBehaviour
             return;
         }
 
+        // [핵심 수정]
+        // 상태가 'playing'이 되거나 'playing'에서 벗어날 때 (예: undead가 될 때),
+        // 'isGrounded' 값을 'false'로 초기화합니다.
+        // 이는 'isGrounded' 값이 갱신되지 않고(stale) 남아있어
+        // 공중 점프가 되는 버그를 방지합니다.
+        if (nextState == BodyState.playing || _appliedState == BodyState.playing)
+        {
+            isGrounded = false;
+            
+            // Character.cs가 jumpRequested를 true로 갖고 있을 수 있으므로,
+            // Character.cs의 PossessBody()에서 jumpRequested = false;는 필수입니다.
+            // (현재 코드에 이미 구현되어 있음)
+        }
+
         _appliedState = nextState;
         var isPlaying = nextState == BodyState.playing;
 
@@ -145,7 +159,6 @@ public class Body : MonoBehaviour
 
     private void ToggleSystems(bool enable)
     {
-        // Animator
         if (animator != null)
         {
             animator.enabled = enable;
@@ -165,21 +178,43 @@ public class Body : MonoBehaviour
         {
             // [핵심 수정 3] 'playing' 상태(enable=true)일 때 Rigidbody를 활성화해야
             // Character가 제어할 수 있습니다.
-            locomotionBody.simulated = enable; 
-
-            if (!enable) // undead 또는 dead 상태일 때만 속도 초기화
-            {
-                locomotionBody.linearVelocity = Vector2.zero;
-                locomotionBody.angularVelocity = 0f;
-            }
+            locomotionBody.simulated = enable;
         }
 
         // // Etc
         // (주석 처리된 코드 동일)
     }
 
-    private void ToggleRagdoll(bool enable)
+    private void ToggleRagdoll(bool enable) // enable 여부에 따라서 흐느적거림 조정.
     {
+        // [핵심 수정 1] 래그돌 자식이 없는 '단순 Body' (Square 등) 처리
+        if (_ragdollBodies.Count == 0 && locomotionBody != null)
+        {
+            if (enable) // Dynamic (undead/dead) => 흐느적거림
+            {
+                locomotionBody.bodyType = RigidbodyType2D.Dynamic;
+                // locomotionBody.gravityScale = ragdollGravityScale;
+                locomotionBody.linearDamping = ragdollLinearDrag;
+                locomotionBody.angularDamping = ragdollAngularDrag;
+
+                // ToggleSystems(false)가 껐던 시뮬레이션을
+                // 래그돌 물리(감지)를 위해 다시 켭니다.
+                locomotionBody.simulated = true;
+            }
+            else // Kinematic (playing) => 애니메이션 제어
+            {
+                // 'playing' 상태로 돌아갈 때.
+                // Character.cs가 PossessBody에서 Dynamic으로 바꿀 것이므로
+                // 여기서는 Kinematic으로만 둡니다. (애니메이션 제어용)
+                locomotionBody.bodyType = RigidbodyType2D.Kinematic;
+                locomotionBody.linearVelocity = Vector2.zero;
+                locomotionBody.angularVelocity = 0f;
+
+                // 'simulated'는 ToggleSystems(true)가 true로 설정하므로
+                // 여기서는 건드리지 않아도 됩니다.
+            }
+        }
+    
         foreach (var body in _ragdollBodies)
         {
             if (body == null)
