@@ -49,9 +49,10 @@ public class Body : MonoBehaviour
     [SerializeField] private LayerMask groundLayer;
     [SerializeField] private Transform groundCheck;
     [SerializeField] private float groundCheckDistance = 0.1f;
-
-    private Rigidbody2D rb; // 이 변수는 초기화되지 않아 사용되지 않음
+    private LayerMask combinedGroundCheckLayer;
     private bool isGrounded;
+    private int playerLayerIndex;
+    private int bodyLayerIndex;
     
     // [핵심 수정 1] Rb 속성이 'locomotionBody'를 반환하도록 수정
     public Rigidbody2D Rb => locomotionBody;
@@ -59,13 +60,35 @@ public class Body : MonoBehaviour
 
     private void Awake()
     {
-        CacheReferences();
+        CacheReferences();// [수정] ApplyState보다 먼저 레이어를 캐시해야 합니다.
+        // [수정] ApplyState보다 먼저 레이어를 캐시해야 합니다.
+        playerLayerIndex = LayerMask.NameToLayer("Player");
+        
+        // [수정] "int"를 삭제합니다.
+        // int bodyLayerIndex = LayerMask.NameToLayer("Body"); // <- (오류 원인)
+        bodyLayerIndex = LayerMask.NameToLayer("Body");     // <- (수정된 코드)
+
+        // [수정] groundLayer와 'Body' 레이어 결합
+        if (bodyLayerIndex != -1)
+        {
+            combinedGroundCheckLayer = groundLayer | (1 << bodyLayerIndex);
+        }
+        else
+        {
+            Debug.LogWarning("Body.cs: 'Body' layer not found...");
+            combinedGroundCheckLayer = groundLayer;
+        }
+
+        // ApplyState는 레이어 캐시 *이후*에 호출
         ApplyState(_state, true);
     }
 
     private void Update()
     {
-        ApplyState(_state);
+        if (Application.isPlaying) 
+        {
+            ApplyState(_state);
+        }
     }
 
     // [핵심 수정 2] Body가 스스로 지면을 검사하도록 FixedUpdate 추가
@@ -143,14 +166,32 @@ public class Body : MonoBehaviour
         if (nextState == BodyState.playing || _appliedState == BodyState.playing)
         {
             isGrounded = false;
-            
-            // Character.cs가 jumpRequested를 true로 갖고 있을 수 있으므로,
-            // Character.cs의 PossessBody()에서 jumpRequested = false;는 필수입니다.
-            // (현재 코드에 이미 구현되어 있음)
+        }
+        // --- 문제 1 수정 ---
+        // 'undead' 상태의 Body가 'dead'가 되는 경우 (장애물 충돌 등)
+        // 스스로 GameManager에 새 Body 스폰을 요청합니다.
+        if (_appliedState == BodyState.undead && nextState == BodyState.dead)
+        {
+            if (GameManager.Instance != null)
+            {
+                GameManager.Instance.SpawnNewUndeadBody();
+            }
         }
 
         _appliedState = nextState;
         var isPlaying = nextState == BodyState.playing;
+
+        // --- 문제 2 수정 ---
+        // 상태에 따라 레이어를 설정합니다.
+        // (Character.cs가 아닌 Body가 직접 레이어를 관리)
+        if (isPlaying)
+        {
+            SetLayerRecursively(playerLayerIndex);
+        }
+        else // 'undead' 또는 'dead' 상태
+        {
+            SetLayerRecursively(bodyLayerIndex);
+        }
 
         ToggleSystems(isPlaying);
         ToggleRagdoll(!isPlaying);
@@ -228,7 +269,7 @@ public class Body : MonoBehaviour
             }
 
             body.bodyType = enable ? RigidbodyType2D.Dynamic : RigidbodyType2D.Kinematic;
-            body.gravityScale = enable ? ragdollGravityScale : 0f;
+            // body.gravityScale = enable ? ragdollGravityScale : 0f;
             body.linearDamping = enable ? ragdollLinearDrag : 0f;
             body.angularDamping = enable ? ragdollAngularDrag : 0f;
             body.simulated = true;
@@ -268,7 +309,7 @@ public class Body : MonoBehaviour
             groundCheck.position, 
             Vector2.down, 
             groundCheckDistance, 
-            groundLayer
+            combinedGroundCheckLayer // [수정] groundLayer 대신 combinedGroundCheckLayer 사용
         );
         
         if (hit.collider != null)

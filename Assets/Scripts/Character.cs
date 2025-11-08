@@ -221,8 +221,6 @@ public class Character : MonoBehaviour
         {
             // [수정] 부모-자식 관계가 아니므로 SetParent 필요 없음
             currentBody.state = BodyState.dead; 
-            // currentBody.gameObject.layer = bodyLayerIndex; 
-            currentBody.SetLayerRecursively(bodyLayerIndex); // Body와 모든 자식(래그돌)의 레이어를 변경
             currentBody = null;
         }
         BecomeGhost();
