@@ -25,8 +25,9 @@ public class Body : MonoBehaviour
     }
 
     [Header("Animation")]
-    [SerializeField] private Animator animator;
-    [SerializeField] private string locomotionStateName = "Walk";
+    // [SerializeField] private Animator animator;
+    [SerializeField] private BodyAnimator animator;
+    [SerializeField] private string locomotionStateName = "walk";
     [SerializeField] private bool autoPlayAnimatorState = true;
 
     [Header("Gameplay References")]
@@ -77,7 +78,8 @@ public class Body : MonoBehaviour
     {
         if (animator == null)
         {
-            animator = GetComponentInChildren<Animator>(true);
+            // animator = GetComponentInChildren<Animator>(true);
+            animator = GetComponentInChildren<BodyAnimator>(true);
         }
 
         if (locomotionBody == null)
@@ -143,10 +145,13 @@ public class Body : MonoBehaviour
         {
             animator.enabled = enable;
 
-            if (enable && autoPlayAnimatorState && !string.IsNullOrEmpty(locomotionStateName))
+            if (!enable)
             {
-                Debug.Log(animator);
-                animator.Play(locomotionStateName, 0, 0f);
+                animator.StopAnimation();
+            }
+            else if (enable && autoPlayAnimatorState && !string.IsNullOrEmpty(locomotionStateName))
+            {
+                animator.StartAnimation(locomotionStateName);
             }
         }
 
@@ -175,37 +180,44 @@ public class Body : MonoBehaviour
         // }
     }
 
-    private void ToggleRagdoll(bool enable) // enable 여부에 따라서 흐느적거림 조정.
+    private void ToggleRagdoll(bool enable)
     {
         foreach (var body in _ragdollBodies)
         {
-            if (enable) // Dynamic => 흐느적거림
+            if (body == null)
             {
-                body.bodyType = RigidbodyType2D.Dynamic;
-                body.gravityScale = ragdollGravityScale;
-                body.linearDamping = ragdollLinearDrag;
-                body.angularDamping = ragdollAngularDrag;
-                body.simulated = true;
+                continue;
             }
-            else // Kinematic => Animation으로만 제어
-            {
-                body.linearVelocity = Vector2.zero;
-                body.angularVelocity = 0f;
-                body.bodyType = RigidbodyType2D.Kinematic;
-                body.simulated = false;
-            }
-        }
 
-        foreach (var joint in _ragdollJoints)
-        {
-            joint.enabled = enable;
+            body.bodyType = enable ? RigidbodyType2D.Dynamic : RigidbodyType2D.Kinematic;
+            body.gravityScale = enable ? ragdollGravityScale : 0f;
+            body.linearDamping = enable ? ragdollLinearDrag : 0f;
+            body.angularDamping = enable ? ragdollAngularDrag : 0f;
+            body.simulated = true;
         }
 
         foreach (var collider in _ragdollColliders)
         {
+            if (collider == null)
+            {
+                continue;
+            }
+
             collider.enabled = enable;
+            collider.isTrigger = !enable;
+        }
+
+        foreach (var joint in _ragdollJoints)
+        {
+            if (joint == null)
+            {
+                continue;
+            }
+
+            joint.enabled = enable;
         }
     }
+
 
     void CheckGround()
     {

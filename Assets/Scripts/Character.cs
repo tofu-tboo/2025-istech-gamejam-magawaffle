@@ -141,9 +141,9 @@ public class Character : MonoBehaviour
         
         // [핵심] Body의 Rigidbody와 설정값 캐시
         bodyRb = currentBody.Rb; 
-        maxSpeedCache = currentBody.maxSpeed;
-        acclerationForceCache = currentBody.acclerationForce;
-        jumpForceCache = currentBody.jumpForce;
+        // maxSpeedCache = currentBody.maxSpeed;
+        // acclerationForceCache = currentBody.acclerationForce;
+        // jumpForceCache = currentBody.jumpForce;
         
         // [레이어 전환] Body를 Player 레이어로 변경 (무한 점프 방지)
         currentBody.gameObject.layer = playerLayerIndex; 
