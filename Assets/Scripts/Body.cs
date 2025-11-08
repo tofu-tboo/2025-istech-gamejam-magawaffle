@@ -12,7 +12,17 @@ public enum BodyState
 [RequireComponent(typeof(Collider2D))]
 public class Body : MonoBehaviour
 {
-    public BodyState state = BodyState.playing;
+    [SerializeField] private BodyState _state = BodyState.playing;
+    public BodyState state
+    {
+        get => _state;
+        set
+        {
+            if (_state == value) return;
+            _state = value;
+            ApplyState(value);
+        }
+    }
 
     [Header("Animation")]
     [SerializeField] private Animator animator;
@@ -49,18 +59,18 @@ public class Body : MonoBehaviour
     private void Awake()
     {
         CacheReferences();
-        ApplyState(state, true);
+        ApplyState(_state, true);
     }
 
     private void OnValidate()
     {
         CacheReferences();
-        ApplyState(state, true);
+        ApplyState(_state, true);
     }
 
     private void Update()
     {
-        ApplyState(state);
+        ApplyState(_state);
     }
 
     private void CacheReferences()
@@ -112,7 +122,7 @@ public class Body : MonoBehaviour
         }
     }
 
-    private void ApplyState(BodyState nextState, bool force = false) // 이 함수를 통해서 애니메이션 및 Ragdoll 물리가 제어됨
+    public void ApplyState(BodyState nextState, bool force = false) // 이 함수를 통해서 애니메이션 및 Ragdoll 물리가 제어됨
     {
         if (!force && nextState == _appliedState) // No 중복
         {
@@ -122,19 +132,20 @@ public class Body : MonoBehaviour
         _appliedState = nextState;
         var isPlaying = nextState == BodyState.playing;
 
-        ToggleGameplaySystems(isPlaying);
+        ToggleSystems(isPlaying);
         ToggleRagdoll(!isPlaying);
     }
 
-    private void ToggleGameplaySystems(bool enableGameplay)
+    private void ToggleSystems(bool enable)
     {
         // Animator
         if (animator != null)
         {
-            animator.enabled = enableGameplay;
+            animator.enabled = enable;
 
-            if (enableGameplay && autoPlayAnimatorState && !string.IsNullOrEmpty(locomotionStateName))
+            if (enable && autoPlayAnimatorState && !string.IsNullOrEmpty(locomotionStateName))
             {
+                Debug.Log(animator);
                 animator.Play(locomotionStateName, 0, 0f);
             }
         }
@@ -143,8 +154,8 @@ public class Body : MonoBehaviour
         if (locomotionBody != null)
         {
             // 이동 시에는 물리 적용 X
-            locomotionBody.simulated = enableGameplay;
-            if (!enableGameplay)
+            locomotionBody.simulated = enable;
+            if (!enable)
             {
                 locomotionBody.linearVelocity = Vector2.zero;
                 locomotionBody.angularVelocity = 0f;
@@ -158,7 +169,7 @@ public class Body : MonoBehaviour
         //     {
         //         if (behaviour != null)
         //         {
-        //             behaviour.enabled = enableGameplay;
+        //             behaviour.enabled = enable;
         //         }
         //     }
         // }
