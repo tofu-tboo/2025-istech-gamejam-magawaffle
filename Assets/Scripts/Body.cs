@@ -25,10 +25,9 @@ public class Body : MonoBehaviour
     }
 
     [Header("Animation")]
-    // [SerializeField] private Animator animator;
     [SerializeField] private BodyAnimator animator;
     [SerializeField] private string locomotionStateName = "walk";
-    [SerializeField] private bool autoPlayAnimatorState = true;
+    [SerializeField] private bool autoPlayAnimatorState = false;
 
     [SerializeField] private Rigidbody2D locomotionBody;
     // [SerializeField] private MonoBehaviour[] gameplayBehaviours;
@@ -167,9 +166,13 @@ public class Body : MonoBehaviour
             {
                 animator.StopAnimation();
             }
-            else if (enable && autoPlayAnimatorState && !string.IsNullOrEmpty(locomotionStateName))
+            else
             {
-                animator.StartAnimation(locomotionStateName);
+                animator.AlignToBasePoseImmediate();
+                if (autoPlayAnimatorState && !string.IsNullOrEmpty(locomotionStateName))
+                {
+                    animator.StartAnimation(locomotionStateName);
+                }
             }
         }
 
@@ -286,6 +289,20 @@ public class Body : MonoBehaviour
     public bool IsGrounded()
     {
         return isGrounded;
+    }
+
+    public void PlayLocomotionAnimation()
+    {
+        if (!string.IsNullOrEmpty(locomotionStateName))
+        {
+            animator?.StartAnimation(locomotionStateName);
+        }
+    }
+
+    public void StopAnimations()
+    {
+        animator?.StopAnimation();
+        animator?.AlignToBasePoseImmediate();
     }
 
     /// <summary>

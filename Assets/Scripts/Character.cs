@@ -66,6 +66,7 @@ public class Character : MonoBehaviour
     
     // [추가] 제어할 Body의 Rigidbody
     private Rigidbody2D bodyRb;
+    private bool isWalking;
 
     // [삭제] Character는 isGrounded 변수가 필요 없음
 

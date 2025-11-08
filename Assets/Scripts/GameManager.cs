@@ -88,7 +88,7 @@ public class GameManager : MonoBehaviour
         {
             activeBodies.Add(newBodyObj);
             // 'Body'의 상태를 'playing'으로 설정 (HandleResurrection은 즉시 빙의)
-            newBody.state = BodyState.playing;
+            // newBody.state = BodyState.playing;
             // '영혼'에게 새 'Body'에 빙의하라고 명령
             playerSoul.PossessBody(newBody);
         }
