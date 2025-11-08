@@ -307,9 +307,8 @@ public class Body : MonoBehaviour
     /// </summary>
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        // 'playing' 상태(조종 중)일 때만 장애물에 닿으면 죽습니다.
-        // (undead/dead 상태의 래그돌이 장애물에 닿는 것은 무시)
-        if (_appliedState != BodyState.playing)
+        // 이미 dead일 경우만 무시
+        if (_appliedState == BodyState.dead)
         {
             return;
         }

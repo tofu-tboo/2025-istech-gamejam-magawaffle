@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 7830374450840613962}
   - component: {fileID: 433293690544864280}
   m_Layer: 6
-  m_Name: Square
+  m_Name: Small Square
   m_TagString: Body
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -30,7 +30,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -2.71, y: 1.61, z: 0}
-  m_LocalScale: {x: 2.4363, y: 3.6758, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3877572361136551385}
