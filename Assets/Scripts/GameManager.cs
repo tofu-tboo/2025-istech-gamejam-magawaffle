@@ -173,12 +173,12 @@ public class GameManager : MonoBehaviour
         }
     }
     
-    public List<GameObject> GetOverlapped(Vector2 globalPosition, float range, bool multi = false)
+    public List<Body> GetOverlapped(Vector2 globalPosition, float range, bool multi = false)
     {
         var circleHits = Physics2D.OverlapCircleAll(globalPosition, range, _bodyLayerMask);
-        var results = new List<GameObject>(multi ? circleHits.Length : 1);
+        var results = new List<Body>(multi ? circleHits.Length : 1);
         float closestSqrDist = float.MaxValue;
-        GameObject closest = null;
+        Body closest = null;
 
         foreach (var hit in circleHits)
         {
@@ -186,7 +186,7 @@ public class GameManager : MonoBehaviour
             {
                 if (multi)
                 {
-                    results.Add(hit.gameObject);
+                    results.Add(hit.gameObject.GetComponent<Body>());
                 }
                 else
                 {
@@ -194,7 +194,7 @@ public class GameManager : MonoBehaviour
                     if (sqrDist < closestSqrDist)
                     {
                         closestSqrDist = sqrDist;
-                        closest = hit.gameObject;
+                        closest = hit.gameObject.GetComponent<Body>();
                     }
                 }
             }
