@@ -228,10 +228,14 @@ public class Character : MonoBehaviour
     {
         state = CharacterState.ghost;
         currentBody = null;
-        bodyRb = null; 
+        bodyRb = null;
 
         // [수정] 영혼 시각 요소 활성화
-        if (spriteRenderer != null) spriteRenderer.enabled = true;
+        if (spriteRenderer != null)
+        {
+            spriteRenderer.enabled = true;
+            spriteRenderer.sortingOrder = 1;
+        }
         if (animator != null) animator.enabled = true; 
 
         rb.simulated = true;
@@ -299,6 +303,11 @@ public class Character : MonoBehaviour
         rb.simulated = false;
         rb.linearVelocity = Vector2.zero;
 
+        if (spriteRenderer != null) 
+        {
+            spriteRenderer.enabled = false; // 빙의 시 영혼 스프라이트 비활성화
+            spriteRenderer.sortingOrder = -2; // [추가] 빙의 시 Order in Layer를 -2로 설정
+        }
         // 2. Character의 Collider 비활성화 (Trigger지만 꺼두는 것이 안전)
         col.enabled = false;
 
