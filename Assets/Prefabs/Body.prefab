@@ -1481,17 +1481,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6998755dcddde6048be15a5779146d01, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _state: 0
+  _state: 1
   animator: {fileID: 8854507838010650678}
   locomotionStateName: walk
-  autoPlayAnimatorState: 1
+  autoPlayAnimatorState: 0
   locomotionBody: {fileID: 3946106167697674192}
   ragdollGravityScale: 1
   ragdollLinearDrag: 0
   ragdollAngularDrag: 0.05
   groundLayer:
     serializedVersion: 2
-    m_Bits: 128
+    m_Bits: 192
   groundCheck: {fileID: 174123158115525582}
   groundCheckDistance: 2
 --- !u!1 &5341462828639113535

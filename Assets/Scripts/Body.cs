@@ -231,6 +231,11 @@ public class Body : MonoBehaviour
             body.simulated = true;
         }
 
+        if (!enable)
+        {
+            animator?.AlignToBasePoseImmediate();
+        }
+
         foreach (var collider in _ragdollColliders)
         {
             if (collider == null)

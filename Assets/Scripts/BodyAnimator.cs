@@ -115,6 +115,11 @@ public class BodyAnimator : MonoBehaviour
         }
     }
 
+    public void AlignToBasePoseImmediate()
+    {
+        ResetPose();
+    }
+
     public void StartAnimation(string animationName)
     {
         if (!enabled)
