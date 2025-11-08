@@ -1,25 +1,34 @@
 fileFormatVersion: 2
-guid: cd563657ae4fa6c47accf97992423093
+guid: 9a5eacb141496a44aa6a6ead34213f2d
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 9020790164072854443
-    second: ISttechcapsule-Photoroom_0
+      213: -9095717837082945937
+    second: Capsule_0
   - first:
-      213: 137408401240057118
-    second: ISttechcapsule-Photoroom_1
+      213: 3666035625099470311
+    second: Capsule_1
   - first:
-      213: 9119158405186666420
-    second: ISttechcapsule-Photoroom_2
+      213: -2376479446621893925
+    second: Capsule_2
   - first:
-      213: 3389804349042144765
-    second: ISttechcapsule-Photoroom_3
+      213: -1628434103670488638
+    second: Capsule_3
   - first:
-      213: -2843590300328145008
-    second: ISttechcapsule-Photoroom_4
+      213: -8792487313342789685
+    second: Capsule_4
   - first:
-      213: -1722740642645125325
-    second: ISttechcapsule-Photoroom_5
+      213: 4769264832912094716
+    second: Capsule_5
+  - first:
+      213: 8054132564402248644
+    second: Capsule_6
+  - first:
+      213: -6553407588770580849
+    second: Capsule_7
+  - first:
+      213: 501655732821853583
+    second: Capsule_8
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -115,13 +124,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: ISttechcapsule-Photoroom_0
+      name: Capsule_0
       rect:
         serializedVersion: 2
-        x: 105
-        y: 746
-        width: 217
-        height: 448
+        x: 148
+        y: 1057
+        width: 215
+        height: 446
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -130,20 +139,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: ba376ea2cd8403d70800000000000000
-      internalID: 9020790164072854443
+      spriteID: f669c7f71d485c180800000000000000
+      internalID: -9095717837082945937
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ISttechcapsule-Photoroom_1
+      name: Capsule_1
       rect:
         serializedVersion: 2
-        x: 531
-        y: 746
-        width: 217
-        height: 448
+        x: 660
+        y: 1057
+        width: 215
+        height: 446
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -152,20 +161,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: e156111863c28e100800000000000000
-      internalID: 137408401240057118
+      spriteID: 7e52bff3aff50e230800000000000000
+      internalID: 3666035625099470311
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ISttechcapsule-Photoroom_2
+      name: Capsule_2
       rect:
         serializedVersion: 2
-        x: 958
-        y: 746
-        width: 216
-        height: 448
+        x: 1172
+        y: 1057
+        width: 215
+        height: 446
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -174,20 +183,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 4bf3baf0142cd8e70800000000000000
-      internalID: 9119158405186666420
+      spriteID: bdac510d88c050fd0800000000000000
+      internalID: -2376479446621893925
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ISttechcapsule-Photoroom_3
+      name: Capsule_3
       rect:
         serializedVersion: 2
-        x: 105
-        y: 106
-        width: 217
-        height: 448
+        x: 148
+        y: 545
+        width: 215
+        height: 446
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -196,20 +205,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: df53bb278110b0f20800000000000000
-      internalID: 3389804349042144765
+      spriteID: 2c1c69e7fc3a669e0800000000000000
+      internalID: -1628434103670488638
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ISttechcapsule-Photoroom_4
+      name: Capsule_4
       rect:
         serializedVersion: 2
-        x: 531
-        y: 106
-        width: 217
-        height: 448
+        x: 660
+        y: 545
+        width: 215
+        height: 446
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -218,20 +227,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 09fc13610b98988d0800000000000000
-      internalID: -2843590300328145008
+      spriteID: bc703148f5fcaf580800000000000000
+      internalID: -8792487313342789685
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ISttechcapsule-Photoroom_5
+      name: Capsule_5
       rect:
         serializedVersion: 2
-        x: 958
-        y: 106
-        width: 216
-        height: 448
+        x: 1172
+        y: 545
+        width: 215
+        height: 446
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -240,8 +249,74 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 337520353889718e0800000000000000
-      internalID: -1722740642645125325
+      spriteID: cf5fc7dc815df2240800000000000000
+      internalID: 4769264832912094716
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Capsule_6
+      rect:
+        serializedVersion: 2
+        x: 148
+        y: 33
+        width: 215
+        height: 446
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4cb1a1b05e606cf60800000000000000
+      internalID: 8054132564402248644
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Capsule_7
+      rect:
+        serializedVersion: 2
+        x: 660
+        y: 33
+        width: 215
+        height: 446
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f86fafaf48e9d05a0800000000000000
+      internalID: -6553407588770580849
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Capsule_8
+      rect:
+        serializedVersion: 2
+        x: 1172
+        y: 33
+        width: 215
+        height: 446
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f85826a2b3d36f600800000000000000
+      internalID: 501655732821853583
       vertices: []
       indices: 
       edges: []
@@ -260,12 +335,15 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      ISttechcapsule-Photoroom_0: 9020790164072854443
-      ISttechcapsule-Photoroom_1: 137408401240057118
-      ISttechcapsule-Photoroom_2: 9119158405186666420
-      ISttechcapsule-Photoroom_3: 3389804349042144765
-      ISttechcapsule-Photoroom_4: -2843590300328145008
-      ISttechcapsule-Photoroom_5: -1722740642645125325
+      Capsule_0: -9095717837082945937
+      Capsule_1: 3666035625099470311
+      Capsule_2: -2376479446621893925
+      Capsule_3: -1628434103670488638
+      Capsule_4: -8792487313342789685
+      Capsule_5: 4769264832912094716
+      Capsule_6: 8054132564402248644
+      Capsule_7: -6553407588770580849
+      Capsule_8: 501655732821853583
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

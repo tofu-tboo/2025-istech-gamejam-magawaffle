@@ -1,51 +1,53 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!78 &1
+---
+!u!78 &1
 TagManager:
   serializedVersion: 3
   tags:
-  - Body
-  - Obstacle
-  - Part
+    - Body
+    - Obstacle
+    - Techtaser
+    - Capsule
   layers:
-  - Default
-  - TransparentFX
-  - Ignore Raycast
-  - 
-  - Water
-  - UI
-  - Body
-  - Ground
-  - Player
-  - Ghost
-  - background
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
+    - Default
+    - TransparentFX
+    - Ignore Raycast
+    -
+    - Water
+    - UI
+    - Body
+    - Ground
+    - Player
+    - Ghost
+    - background
+    -
+    -
+    -
+    -
+    -
+    -
+    -
+    -
+    -
+    -
+    -
+    -
+    -
+    -
+    -
+    -
+    -
+    -
+    -
+    -
+    -
   m_SortingLayers:
-  - name: Default
-    uniqueID: 0
-    locked: 0
-  - name: background
-    uniqueID: 1623428395
-    locked: 0
+    - name: Default
+      uniqueID: 0
+      locked: 0
+    - name: background
+      uniqueID: 1623428395
+      locked: 0
   m_RenderingLayers:
-  - Default
+    - Default
