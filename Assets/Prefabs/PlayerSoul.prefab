@@ -175,11 +175,11 @@ MonoBehaviour:
   killKey: 101
   findrange: 0.1
   movetype: 1
-  maxSpeed: 3
+  maxSpeed: 8
   acclerationForce: 100
   instantSpeed: 3
   gravityScale: 3
-  jumpForce: 10
+  jumpForce: 12
   ghostMoveType: 0
   ghostMaxSpeed: 4
   ghostAcclerationForce: 100

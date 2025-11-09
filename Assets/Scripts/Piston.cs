@@ -12,7 +12,7 @@ public class Piston : MonoBehaviour
 
     [Tooltip("상태에 따라 스프라이트가 바뀔 자석 부분")]
     [SerializeField] private SpriteRenderer magneticSpriteRenderer;
-    
+
     [Header("설정 (Settings)")]
     [Tooltip("플레이어를 감지할 거리 (PressSprite 아래쪽)")]
     [SerializeField] private float detectionRange = 5f;
@@ -75,7 +75,7 @@ public class Piston : MonoBehaviour
 
         // Rigidbody를 Kinematic으로 강제 설정
         pressRb.bodyType = RigidbodyType2D.Kinematic;
-        
+
         // 시작 위치 저장 (월드 좌표 기준)
         originalPosition = pressRb.position;
 
@@ -91,11 +91,18 @@ public class Piston : MonoBehaviour
             Debug.LogWarning("Piston: magneticSpriteRenderer가 할당되지 않았습니다.", this);
         }
     }
-
+    void Update()
+    {
+        if (CheckForPlayer())
+        {
+            currentState = PistonState.Falling;
+        }
+    }
     void FixedUpdate()
     {
         if (!isEnabled)
         {
+
             // [수정] 비활성화 시 Inactive 스프라이트로 고정
             if (magneticSpriteRenderer != null)
             {
@@ -110,13 +117,12 @@ public class Piston : MonoBehaviour
         {
             case PistonState.Idle:
                 pressCollider.enabled = false; // 대기 중엔 안전
-                
+
                 // [수정] 'inactive' 스프라이트
                 if (magneticSpriteRenderer != null)
                 {
                     magneticSpriteRenderer.sprite = inactiveMagneticSprite;
                 }
-                
                 if (CheckForPlayer())
                 {
                     currentState = PistonState.Falling;
@@ -128,16 +134,6 @@ public class Piston : MonoBehaviour
                 // 1. 현재 위치에서 (아래방향 * 속도 * 시간) 만큼 이동할 '다음 위치' 계산
                 Vector2 newFallPos = pressRb.position + (Vector2.down * fallSpeed * Time.fixedDeltaTime);
                 // 2. 물리 엔진을 통해 '다음 위치'로 이동
-                pressRb.MovePosition(newFallPos);
-                
-                pressCollider.enabled = true; // 낙하 중엔 위험
-                
-                // [수정] 'active' 스프라이트
-                if (magneticSpriteRenderer != null)
-                {
-                    magneticSpriteRenderer.sprite = activeMagneticSprite;
-                }
-                
                 // 바닥 감지
                 if (CheckForGround())
                 {
@@ -146,12 +142,23 @@ public class Piston : MonoBehaviour
                     groundedTimer = groundedWaitTime;
                     currentState = PistonState.Grounded;
                 }
+                else
+                    pressRb.MovePosition(newFallPos);
+
+                pressCollider.enabled = true; // 낙하 중엔 위험
+
+                // [수정] 'active' 스프라이트
+                if (magneticSpriteRenderer != null)
+                {
+                    magneticSpriteRenderer.sprite = activeMagneticSprite;
+                }
+
                 break;
 
             case PistonState.Grounded:
                 // MovePosition()을 호출하지 않으므로, 그 자리에 멈춰있습니다.
                 pressCollider.enabled = true; // 바닥에 있을 때도 위험 (깔림)
-                
+
                 // [수정] 'active' 스프라이트
                 if (magneticSpriteRenderer != null)
                 {
@@ -171,18 +178,18 @@ public class Piston : MonoBehaviour
                 pressRb.MovePosition(newRisePos);
 
                 pressCollider.enabled = false; // 올라갈 땐 안전
-                
+
                 // [수정] 'inactive' 스프라이트
                 if (magneticSpriteRenderer != null)
                 {
                     magneticSpriteRenderer.sprite = inactiveMagneticSprite;
                 }
-                
+
                 // 원래 위치로 복귀했는지 확인
                 if (pressRb.position.y >= originalPosition.y)
                 {
                     // [핵심 수정] 정확한 원래 위치로 스냅
-                    pressRb.MovePosition(originalPosition); 
+                    pressRb.MovePosition(originalPosition);
                     currentState = PistonState.Idle;
                 }
                 break;
@@ -193,13 +200,13 @@ public class Piston : MonoBehaviour
     private bool CheckForPlayer()
     {
         if (pressCollider == null) return false;
-        
+
         // 콜라이더의 바닥 중앙 지점 계산
         Vector2 rayOrigin = new Vector2(pressCollider.bounds.center.x, pressCollider.bounds.min.y);
         RaycastHit2D hit = Physics2D.Raycast(rayOrigin, Vector2.down, detectionRange, combinedDetectionMask);
 
         // Debug.DrawRay(rayOrigin, Vector2.down * detectionRange, Color.red);
-        
+
         return hit.collider != null;
     }
 
@@ -217,15 +224,15 @@ public class Piston : MonoBehaviour
         float rayDistance = 0.2f;
 
         RaycastHit2D hit = Physics2D.Raycast(
-            rayOrigin, 
-            Vector2.down, 
-            rayDistance, 
+            rayOrigin,
+            Vector2.down,
+            rayDistance,
             groundLayer
         );
 
         // 씬(Scene) 뷰에 레이저를 그림
         Debug.DrawRay(rayOrigin, Vector2.down * rayDistance, hit.collider != null ? Color.green : Color.red);
-        
+
         if (hit.collider != null)
         {
             return true;
@@ -254,4 +261,13 @@ public class Piston : MonoBehaviour
         isEnabled = false;
         currentState = PistonState.Rising; // 비활성화 시 안전하게 복귀
     }
+
+    void OnCollisionStay2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Body"))
+        {
+            Destroy(collision.gameObject);
+        }
+    }
+
 }

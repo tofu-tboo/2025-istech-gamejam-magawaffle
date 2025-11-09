@@ -46,7 +46,7 @@ public class Button : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D other)
     {
         // 지정된 레이어(Player, Body) 또는 태그(PistonPress)인지 확인
-        if (IsInDetectionMask(other.gameObject.layer) || other.CompareTag(PISTON_TAG))
+        if (IsInDetectionMask(other.gameObject.layer) || other.CompareTag(PISTON_TAG) || other.CompareTag("Object"))
         {
             activatorCount++;
             
@@ -67,7 +67,7 @@ public class Button : MonoBehaviour
     private void OnTriggerExit2D(Collider2D other)
     {
         // 지정된 레이어(Player, Body) 또는 태그(PistonPress)인지 확인
-        if (IsInDetectionMask(other.gameObject.layer) || other.CompareTag(PISTON_TAG))
+        if (IsInDetectionMask(other.gameObject.layer) || other.CompareTag(PISTON_TAG) || other.CompareTag("Object"))
         {
             activatorCount--;
             

@@ -121,6 +121,10 @@ public class GameManager : MonoBehaviour
         {
             HandleResurrection();
         }
+        if (Input.GetKeyDown(KeyCode.K))
+        {
+            LoadNextScene();
+        }
     }
 
     private void CacheLayerMask()
