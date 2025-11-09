@@ -170,13 +170,13 @@ public class Body : MonoBehaviour
                 ApplyChildrenDim(0.8f);
                 break;
             case BodyState.dead:
-                if (_state == BodyState.undead) // 새 Body 요청
-                {
+                if (_state != BodyState.undead && _state!= BodyState.dead) // 새 Body 요청
+                //{
                     if (GameManager.Instance != null)
                     {
                         GameManager.Instance.SpawnNewUndeadBody();
                     }
-                }
+                //}
                 isPlaying = false;
                 animator?.StartAnimation("free");
                 ApplyChildrenDim(0.4f);

@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement; // 씬 관리를 위한 네임스페이스 추가
 using System; // 리스트 사용을 위해 필수
 
 public class GameManager : MonoBehaviour
@@ -26,8 +27,13 @@ public class GameManager : MonoBehaviour
     [SerializeField] private string bodyLayerName = "Body";
     private int _bodyLayerMask = ~0;
     
+    [Header("Scene Management")] // 씬 관리 설정을 위한 헤더
+    [SerializeField] private int nextSceneName = 2 ; // 다음 씬의 이름
+
     // [추가] 전체 Body 스폰 횟수 추적 변수
     private int _totalBodiesSpawned = 0;
+    
+    private Scene currentScene; 
 
     /// <summary>
     /// [추가] 전체 게임에서 Body가 생성된 총 횟수입니다.
@@ -48,6 +54,51 @@ public class GameManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+
+    }
+    
+     private void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+        // [추가] GameManager가 활성화될 때 현재 활성화된 씬 정보를 가져옵니다.
+        // 이것은 에디터에서 플레이 버튼을 눌러 첫 씬이 로드될 때 유용합니다.
+        currentScene = SceneManager.GetActiveScene();
+    }
+
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        // [수정] 현재 로드된 씬 정보를 저장
+        currentScene = scene; 
+        Debug.Log($"GameManager: 씬 '{currentScene.name}' 로드 완료. 빌드 인덱스: {currentScene.buildIndex}");
+
+        // 1. 새 씬에 있는 "RespawnPoint" 태그를 가진 오브젝트를 찾습니다.
+        GameObject spawnPointObj = GameObject.FindWithTag("Respawn");
+        playerSoul = GameObject.FindWithTag("Player").GetComponent<Character>();
+
+        if (spawnPointObj != null)
+        {
+            respawnPoint = spawnPointObj.transform;
+            Debug.Log($"GameManager: 씬 '{currentScene.name}'의 RespawnPoint를 찾았습니다.");
+
+            if (playerSoul != null)
+            {
+                playerSoul.HandleBodyDestruction();
+                SpawnAndPossessBody(respawnPoint.position);
+            }
+            else
+            {
+                Debug.LogError("GameManager: playerSoul이 할당되지 않았습니다!");
+            }
+        }
+        else
+        {
+            Debug.LogError($"GameManager: 씬 '{currentScene.name}'에 'RespawnPoint' 태그를 가진 오브젝트가 없습니다!");
+        }
     }
 
     void Start()
@@ -58,8 +109,9 @@ public class GameManager : MonoBehaviour
             Debug.LogError("GameManager: playerSoul이 할당되지 않았습니다!");
             return;
         }
+
         // 게임 시작 시, '유령' 상태인 플레이어에게 첫 '육체'를 줍니다.
-        HandleResurrection();
+        //HandleResurrection();
     }
 
     void Update()
@@ -79,6 +131,12 @@ public class GameManager : MonoBehaviour
         {
             Debug.LogWarning($"Layer '{bodyLayerName}' not found. Using all layers for overlap queries.");
         }
+    }
+        public void LoadNextScene()
+    {
+        Debug.Log($"GameManager: 다음 씬 '{nextSceneName}'으로 이동합니다.");
+        SceneManager.LoadScene(nextSceneName);
+        nextSceneName += 1;
     }
 
     // --- Body 컨트롤 로직 ---
@@ -117,27 +175,36 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void SpawnNewUndeadBody()
     {
-        Debug.Log("GameManager: 'dead' 알림 수신. 새 'undead' Body를 리스폰합니다.");
+        if (bodyPrefab == null)
+        {
+            Debug.LogError("GameManager: bodyPrefab이 할당되지 않았습니다!");
+            return;
+        }
 
-        GameObject newBodyObj = Instantiate(bodyPrefab, respawnPoint.position, respawnPoint.rotation);
-        
-        // [추가] Body 생성 횟수 증가
+        if (respawnPoint == null)
+        {
+            Debug.LogError("GameManager: respawnPoint가 할당되지 않았습니다!");
+            return;
+        }
+
+        Debug.Log("GameManager: 리스폰 포인트에 새 육체 생성 요청.");
+
+        // 1. 새 Body 오브젝트 생성
+        GameObject newBodyObj = Instantiate(bodyPrefab, respawnPoint.position, Quaternion.identity);
         _totalBodiesSpawned++;
 
+        // 2. Body 스크립트에 접근하여 초기 상태 설정
         Body newBody = newBodyObj.GetComponent<Body>();
-
         if (newBody != null)
         {
-            // [중요] 생성된 Body의 상태를 'undead'로 설정 (빙의하지 않음)
-            newBody.state = BodyState.undead; 
-            activeBodies.Add(newBodyObj);
+            newBody.state = BodyState.undead; // 초기 상태는 'undead'
+            activeBodies.Add(newBodyObj); // 리스트에 추가 (옵션)
         }
         else
         {
             Debug.LogError("bodyPrefab에 Body.cs 스크립트가 없습니다!");
         }
     }
-
     public void SpawnAndPossessBody(Vector3 spawnPosition)
     {
         Debug.Log($"GameManager: {spawnPosition}에 새 육체를 생성하고 빙의합니다.");
@@ -286,4 +353,4 @@ public class GameManager : MonoBehaviour
         
         return results;
     }
-}
+}   
