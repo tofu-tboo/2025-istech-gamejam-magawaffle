@@ -374,5 +374,25 @@ public class Body : MonoBehaviour
     }
 
 
+    public void HandlePistonCrush()
+    {
+        // [추가] 이 로그가 보여야 합니다!
+        Debug.Log($"Body ({_state})가 Piston에 의해 파괴됨.");
+
+        // 1. 만약 빙의된 상태였다면, 영혼을 즉시 방출
+        if (isPlaying && GameManager.Instance != null && GameManager.Instance.playerSoul != null)
+        {
+            GameManager.Instance.playerSoul.HandleBodyDestruction();
+            if (GameManager.Instance != null)
+            {
+                GameManager.Instance.SpawnNewUndeadBody();
+            }
+        }
+
+        // 2. 새 'undead' Body를 리스폰
+        
+        // 3. 이 Body 오브젝트 파괴
+        Destroy(gameObject);
+    }
 
 }

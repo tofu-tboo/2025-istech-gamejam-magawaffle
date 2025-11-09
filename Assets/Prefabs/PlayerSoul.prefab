@@ -180,7 +180,7 @@ MonoBehaviour:
   carryLocalOffset: {x: 0, y: 3}
   maxThrowChargeTime: 2
   minThrowForce: 1
-  maxThrowForce: 35
+  maxThrowForce: 10
   throwForceDirection: {x: 1, y: 1}
   movetype: 1
   maxSpeed: 8
