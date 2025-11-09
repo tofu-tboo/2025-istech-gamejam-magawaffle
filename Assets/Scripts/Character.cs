@@ -616,7 +616,6 @@ public class Character : MonoBehaviour
         RestoreCarriedBodyPhysics();
         Transform fallbackParent = transform.parent != null ? transform.parent : null;
         carriedBody.transform.SetParent(fallbackParent);
-        carriedBodyRoot.simulated = false; // false였던 Body simulated 복구
         carriedBody = null;
         carriedBodyRoot = null;
         throwKeyHoldTime = 0f;
@@ -631,7 +630,6 @@ public class Character : MonoBehaviour
         }
 
         RestoreCarriedBodyPhysics();
-        carriedBodyRoot.simulated = true; // test
         carriedBody.transform.SetParent(null);
 
         Vector2 direction = throwForceDirection;
