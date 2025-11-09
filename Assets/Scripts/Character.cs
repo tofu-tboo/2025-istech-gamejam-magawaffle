@@ -528,19 +528,19 @@ public class Character : MonoBehaviour
 
         bool hasBounds = TryComputeBodyBounds(candidate, out Bounds combinedBounds);
 
-        carriedBodyRoot.simulated = true; // 던져질려면 simulation 되어야 함.
+        carriedBodyRoot.simulated = false;
 
         Transform parent = currentBody != null ? currentBody.transform : transform;
         carriedBody.transform.SetParent(parent);
         carriedBody.transform.localRotation = Quaternion.identity;
 
-        Vector3 localPos = carryLocalOffset;
-        if (hasBounds)
-        {
-            localPos += ApplyCarriedBodyOrientation(combinedBounds);
-        }
+        // Vector3 localPos = carryLocalOffset;
+        // if (hasBounds)
+        // {
+        //     localPos += ApplyCarriedBodyOrientation(combinedBounds);
+        // }
 
-        carriedBody.transform.localPosition = localPos;
+        carriedBody.transform.localPosition = carryLocalOffset;
     }
 
     private Vector3 ApplyCarriedBodyOrientation(Bounds bounds)
@@ -614,6 +614,8 @@ public class Character : MonoBehaviour
         }
 
         RestoreCarriedBodyPhysics();
+        carriedBodyRoot.simulated = true;
+        carriedBody.state = carriedBody.state == BodyState.dead ? BodyState.dead : BodyState.undead;
         Transform fallbackParent = transform.parent != null ? transform.parent : null;
         carriedBody.transform.SetParent(fallbackParent);
         carriedBody = null;
@@ -630,6 +632,8 @@ public class Character : MonoBehaviour
         }
 
         RestoreCarriedBodyPhysics();
+        carriedBodyRoot.simulated = true;
+        carriedBody.state = carriedBody.state == BodyState.dead ? BodyState.dead : BodyState.undead;
         carriedBody.transform.SetParent(null);
 
         Vector2 direction = throwForceDirection;

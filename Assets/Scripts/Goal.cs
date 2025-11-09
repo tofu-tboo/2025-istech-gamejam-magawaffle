@@ -13,7 +13,7 @@ public class Goal : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D other)
     {
         // 이미 골에 도달했거나, 충돌한 오브젝트가 Body가 아니면 무시
-        if (isGoalReached || other.gameObject.layer != LayerMask.NameToLayer("Player")) // Player 레이어 (빙의된 Body)만 감지
+        if (isGoalReached || other.gameObject.layer != LayerMask.NameToLayer("Player") || other.GetComponent<Body>().IsPlaying()) // Player 레이어 (빙의된 Body)만 감지
         {
             return;
         }

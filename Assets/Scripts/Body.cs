@@ -65,6 +65,7 @@ public class Body : MonoBehaviour
 
     // 플레이어 빙의 상태 확인을 위한 플래그
     private bool isPlaying = false;
+    public bool IsPlaying() => isPlaying;
 
     private bool istechtasercollide = false;
     public bool IsTechTaserCollide => istechtasercollide;
