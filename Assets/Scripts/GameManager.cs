@@ -1,4 +1,4 @@
-using UnityEngine;
+    using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement; // 씬 관리를 위한 네임스페이스 추가
 using System; // 리스트 사용을 위해 필수
@@ -7,6 +7,10 @@ public class GameManager : MonoBehaviour
 {
     // 1. 싱글톤 인스턴스
     public static GameManager Instance { get; private set; }
+        [Header("Door Management")] // [추가] 문 관리를 위한 헤더
+    // [추가] 현재 어떤 타입의 문이 열려야 하는지를 나타내는 변수
+    // (예: "A"이면 A 타입 문이 열림, "B"이면 B 타입 문이 열림, "" 또는 null이면 모든 문 닫힘)
+    public string currentDoorState = ""; 
 
     [Header("영혼 (플레이어)")]
     public Character playerSoul; // 씬에 있는 'Character' (영혼) 오브젝트
@@ -26,9 +30,10 @@ public class GameManager : MonoBehaviour
     private List<GameObject> activeBodies = new List<GameObject>();
     [SerializeField] private string bodyLayerName = "Body";
     private int _bodyLayerMask = ~0;
-    
+
     [Header("Scene Management")] // 씬 관리 설정을 위한 헤더
-    [SerializeField] private int nextSceneName = 2 ; // 다음 씬의 이름
+    [SerializeField] private int nextSceneName = 2; // 다음 씬의 이름
+    
 
     // [추가] 전체 Body 스폰 횟수 추적 변수
     private int _totalBodiesSpawned = 0;
@@ -125,6 +130,11 @@ public class GameManager : MonoBehaviour
         {
             LoadNextScene();
         }
+    }
+        public void SetDoorState(string newState)
+    {
+        currentDoorState = newState;
+        Debug.Log($"GameManager: 문 상태가 '{currentDoorState}'로 변경되었습니다.");
     }
 
     private void CacheLayerMask()
