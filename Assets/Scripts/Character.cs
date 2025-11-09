@@ -158,7 +158,7 @@ public class Character : MonoBehaviour
             {
                 ReleaseBody(); 
             }
-            if (Input.GetKeyDown(killKey)) KillCurrentBody();
+            if (Input.GetKeyDown(killKey) && currentBody != null) KillCurrentBody();
 
             if (Input.GetKeyDown(carryKey))
             {
