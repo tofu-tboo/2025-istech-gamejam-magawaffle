@@ -315,8 +315,8 @@ public class BodyAnimator : MonoBehaviour
                 continue;
             }
 
-            part.body.linearVelocity = Vector2.zero;
-            part.body.angularVelocity = 0;
+            part.body.linearVelocity = new Vector2(0f, part.body.linearVelocity.y);
+            part.body.angularVelocity = 0f;
 
             ApplyLocalPose(part, part.targetLocalPosition, part.targetLocalRotation);
         }
