@@ -281,11 +281,13 @@ public class Body : MonoBehaviour
     public void SetLayerRecursively(int newLayer)
     {
         // 모든 자식 트랜스폼(자기 자신 포함)을 가져옵니다.
-        Transform[] allChildren = GetComponentsInChildren<Transform>(true);
-        foreach (Transform child in allChildren)
-        {
-            child.gameObject.layer = newLayer;
-        }
+        // Transform[] allChildren = GetComponentsInChildren<Transform>(true);
+        // foreach (Transform child in allChildren)
+        // {
+        //     child.gameObject.layer = newLayer;
+        // }
+
+        gameObject.layer = newLayer;
     }
     
     /// <summary>
