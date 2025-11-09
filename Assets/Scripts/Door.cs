@@ -12,7 +12,7 @@ public class Door : MonoBehaviour
     [SerializeField] private float openAlpha = 0.3f;
 
     [Tooltip("이 문이 어떤 타입인지 지정합니다 (예: 'A', 'B'). DoorController의 currentDoorState와 일치하면 열립니다.")]
-    [SerializeField] private string doorType; // 이 Door 오브젝트의 타입 (예: "A", "B")
+    [SerializeField] private string doorType = null; // 이 Door 오브젝트의 타입 (예: "A", "B")
 
     // 컴포넌트 참조
     private SpriteRenderer sr;
@@ -42,19 +42,22 @@ public class Door : MonoBehaviour
     {
         if (doorType != null)
         {
-            // DoorController 클래스의 static 변수 currentDoorState를 직접 참조합니다.
-            // DoorController 오브젝트가 씬에 없거나 스크립트가 비활성화되어 있어도 이 값은 접근 가능합니다.
-            // 다만, DoorController가 초기화되지 않았다면 기본값 ""을 가질 수 있습니다.
-            string currentControlState = DoorController.currentDoorState;
+            if (doorType != "C")
+            {
+                // DoorController 클래스의 static 변수 currentDoorState를 직접 참조합니다.
+                // DoorController 오브젝트가 씬에 없거나 스크립트가 비활성화되어 있어도 이 값은 접근 가능합니다.
+                // 다만, DoorController가 초기화되지 않았다면 기본값 ""을 가질 수 있습니다.
+                string currentControlState = DoorController.currentDoorState;
 
-            // 이 문의 'doorType'이 DoorController가 지시하는 'currentControlState'와 일치하면 문을 엽니다.
-            if (doorType == currentControlState)
-            {
-                Open();
-            }
-            else // 일치하지 않으면 문을 닫습니다.
-            {
-                Close();
+                // 이 문의 'doorType'이 DoorController가 지시하는 'currentControlState'와 일치하면 문을 엽니다.
+                if (doorType == currentControlState)
+                {
+                    Open();
+                }
+                else // 일치하지 않으면 문을 닫습니다.
+                {
+                    Close();
+                }
             }
         }
     }

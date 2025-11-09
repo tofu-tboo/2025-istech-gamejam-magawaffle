@@ -10,7 +10,7 @@ public class DoorController : MonoBehaviour
 {
     // [핵심] 'static'으로 선언하여 모든 스크립트가 'DoorController.currentDoorState'로
     // 이 변수에 접근할 수 있게 합니다.
-    public static string currentDoorState; // ""(빈 문자열)은 모든 문이 닫힌 상태
+    [SerializeField]public static string currentDoorState = "C"; // ""(빈 문자열)은 모든 문이 닫힌 상태
 
     /// <summary>
     /// [static 함수] 외부에서 문 상태를 변경합니다.
@@ -19,11 +19,12 @@ public class DoorController : MonoBehaviour
     /// <param name>"A", "B", "" 등</param>
     public static void SetDoorState()
     {
+
         if (currentDoorState == "B")
         {
             currentDoorState = "A";
         }
-        else
+        else if (currentDoorState == "A")
         { currentDoorState = "B"; }
         
     }
