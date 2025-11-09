@@ -290,6 +290,7 @@ public class Body : MonoBehaviour
             if (child == transform) continue;
             else if (child.name == "Pad") continue;
             else if (child.name == "ButtonCollider") continue;
+            else if (child.name.Contains("Body")) continue;
             child.gameObject.layer = newLayer;
         }
     }

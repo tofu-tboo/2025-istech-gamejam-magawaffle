@@ -82,7 +82,6 @@ public class Character : MonoBehaviour
     private Body carriedBody;
     private Rigidbody2D carriedBodyRoot;
     private readonly List<RigidbodyState> carriedBodyStates = new();
-    private readonly HashSet<int> thrownBodyIds = new();
     private float throwKeyHoldTime;
     private float lastFacingDirection = 1f;
 
@@ -482,11 +481,6 @@ public class Character : MonoBehaviour
                 continue;
             }
 
-            if (thrownBodyIds.Contains(body.GetInstanceID()))
-            {
-                continue;
-            }
-
             if (body.state != BodyState.undead && body.state != BodyState.dead)
             {
                 continue;
@@ -654,7 +648,6 @@ public class Character : MonoBehaviour
             carriedBodyRoot.AddForce(direction * forceMagnitude, ForceMode2D.Impulse);
         }
 
-        thrownBodyIds.Add(carriedBody.GetInstanceID());
         carriedBody = null;
         carriedBodyRoot = null;
         throwKeyHoldTime = 0f;

@@ -199,11 +199,27 @@ public class BodyAnimator : MonoBehaviour
             case "catch":
             case "catching":
             case "receive":
+                foreach (var partName in new string[] { "Pelvis", "Head", "Torso", "LegLU", "LegRU", "LegLD", "LegRD", "ArmLU", "ArmLD", "ArmRU", "ArmRD" })
+                {
+                    var part = _lookup[partName];
+                    part.body.bodyType = RigidbodyType2D.Kinematic;
+                    SetTargetPose(partName, part.originLocalPosition, part.originLocalRotation);
+                    part.body.gravityScale = 0.0f;
+                    part.noLerp = false;
+                }
                 break;
 
             case "throw":
             case "throwing":
             case "toss":
+                foreach (var partName in new string[] { "Pelvis", "Head", "Torso", "LegLU", "LegRU", "LegLD", "LegRD", "ArmLU", "ArmLD", "ArmRU", "ArmRD" })
+                {
+                    var part = _lookup[partName];
+                    part.body.bodyType = RigidbodyType2D.Kinematic;
+                    SetTargetPose(partName, part.originLocalPosition, part.originLocalRotation);
+                    part.body.gravityScale = 0.0f;
+                    part.noLerp = false;
+                }
                 break;
             default:
                 break;
