@@ -31,7 +31,7 @@ public class Button : MonoBehaviour
     void Awake()
     {
         // "Player" 레이어와 "Body" 레이어를 모두 감지하도록 설정
-        int playerLayer = LayerMask.NameToLayer("Player");
+        int playerLayer = LayerMask.NameToLayer("ButtonC");
         int bodyLayer = LayerMask.NameToLayer("Body");
         detectionMask = (1 << playerLayer) | (1 << bodyLayer);
         

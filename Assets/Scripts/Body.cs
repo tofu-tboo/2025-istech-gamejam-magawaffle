@@ -59,6 +59,8 @@ public class Body : MonoBehaviour
     private bool isGrounded = false;
     private int playerLayerIndex;
     private int bodyLayerIndex;
+    private int partLayerIndex;
+    private int solidLayerIndex;
 
     // [핵심 수정 1] Rb 속성이 'locomotionBody'를 반환하도록 수정
     public Rigidbody2D Rb => locomotionBody;
@@ -76,10 +78,14 @@ public class Body : MonoBehaviour
         CacheReferences();// [수정] ApplyState보다 먼저 레이어를 캐시해야 합니다.
         // [수정] ApplyState보다 먼저 레이어를 캐시해야 합니다.
         playerLayerIndex = LayerMask.NameToLayer("Player");
-        
+
         // [수정] "int"를 삭제합니다.
         // int bodyLayerIndex = LayerMask.NameToLayer("Body"); // <- (오류 원인)
         bodyLayerIndex = LayerMask.NameToLayer("Body");     // <- (수정된 코드)
+
+        partLayerIndex = LayerMask.NameToLayer("part");
+
+        solidLayerIndex = LayerMask.NameToLayer("Solid");
 
         // [수정] groundLayer와 'Body' 레이어 결합
         if (bodyLayerIndex != -1)
@@ -200,11 +206,13 @@ public class Body : MonoBehaviour
 
         if (isPlaying) // isPlaying = true로 바뀌었을 때
         {
-            SetLayerRecursively(playerLayerIndex);
+            SetLayerRecursively(partLayerIndex);
+            gameObject.layer = playerLayerIndex;
         }
         else // 'undead' 또는 'dead' 상태
         {
-            SetLayerRecursively(bodyLayerIndex);
+            SetLayerRecursively(solidLayerIndex);
+            gameObject.layer = bodyLayerIndex;
         }
 
         ToggleBodyPhysics(!isPlaying);
@@ -221,9 +229,6 @@ public class Body : MonoBehaviour
                 locomotionBody.linearDamping = ragdollLinearDrag;
                 locomotionBody.angularDamping = ragdollAngularDrag;
 
-                locomotionBody.GetComponent<BoxCollider2D>().isTrigger = false;
-                locomotionBody.simulated = true;
-
                 // ToggleSystems(false)가 껐던 시뮬레이션을
                 // 래그돌 물리(감지)를 위해 다시 켭니다.
             }
@@ -236,8 +241,6 @@ public class Body : MonoBehaviour
                 locomotionBody.linearVelocity = Vector2.zero;
                 locomotionBody.angularVelocity = 0f;
 
-                locomotionBody.GetComponent<BoxCollider2D>().isTrigger = false;
-                locomotionBody.simulated = true;
             }
 
         }
@@ -284,6 +287,10 @@ public class Body : MonoBehaviour
         Transform[] allChildren = GetComponentsInChildren<Transform>(true);
         foreach (Transform child in allChildren)
         {
+            if (child == transform) continue;
+            else if (child.name == "Pad") continue;
+            else if (child.name == "ButtonCollider") continue;
+            else if (child.name.Contains("Body")) continue;
             child.gameObject.layer = newLayer;
         }
     }

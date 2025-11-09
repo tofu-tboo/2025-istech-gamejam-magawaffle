@@ -152,8 +152,8 @@ CircleCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
-  m_Radius: 0.5
+  m_Offset: {x: 0, y: -0.8}
+  m_Radius: 2
 --- !u!114 &3785604984073686285
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -177,9 +177,9 @@ MonoBehaviour:
   throwKey: 108
   findrange: 0.1
   carryRange: 2
-  carryLocalOffset: {x: 0, y: 0.5}
-  maxThrowChargeTime: 1.25
-  minThrowForce: 10
+  carryLocalOffset: {x: 0, y: 3}
+  maxThrowChargeTime: 2
+  minThrowForce: 1
   maxThrowForce: 35
   throwForceDirection: {x: 1, y: 1}
   movetype: 1
