@@ -289,6 +289,7 @@ public class Body : MonoBehaviour
         {
             if (child == transform) continue;
             else if (child.name == "Pad") continue;
+            else if (child.name == "ButtonCollider") continue;
             child.gameObject.layer = newLayer;
         }
     }
