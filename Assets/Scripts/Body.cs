@@ -220,8 +220,8 @@ public class Body : MonoBehaviour
                 locomotionBody.linearDamping = ragdollLinearDrag;
                 locomotionBody.angularDamping = ragdollAngularDrag;
 
-                locomotionBody.GetComponent<BoxCollider2D>().isTrigger = true;
-                locomotionBody.simulated = false;
+                locomotionBody.GetComponent<BoxCollider2D>().isTrigger = false;
+                locomotionBody.simulated = true;
 
                 // ToggleSystems(false)가 껐던 시뮬레이션을
                 // 래그돌 물리(감지)를 위해 다시 켭니다.

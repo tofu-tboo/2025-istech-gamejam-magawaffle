@@ -173,7 +173,15 @@ MonoBehaviour:
   jumpKey: 32
   dieKey: 113
   killKey: 101
+  carryKey: 59
+  throwKey: 108
   findrange: 0.1
+  carryRange: 2
+  carryLocalOffset: {x: 0, y: 1.5}
+  maxThrowChargeTime: 1.25
+  minThrowForce: 10
+  maxThrowForce: 35
+  throwForceDirection: {x: 1, y: 1}
   movetype: 1
   maxSpeed: 8
   acclerationForce: 100
