@@ -220,8 +220,8 @@ public class Body : MonoBehaviour
                 locomotionBody.linearDamping = ragdollLinearDrag;
                 locomotionBody.angularDamping = ragdollAngularDrag;
 
-                // locomotionBody.GetComponent<BoxCollider2D>().isTrigger = true;
-                // locomotionBody.simulated = false;
+                locomotionBody.GetComponent<BoxCollider2D>().isTrigger = true;
+                locomotionBody.simulated = false;
 
                 // ToggleSystems(false)가 껐던 시뮬레이션을
                 // 래그돌 물리(감지)를 위해 다시 켭니다.
@@ -235,8 +235,8 @@ public class Body : MonoBehaviour
                 locomotionBody.linearVelocity = Vector2.zero;
                 locomotionBody.angularVelocity = 0f;
 
-                // locomotionBody.GetComponent<BoxCollider2D>().isTrigger = false;
-                // locomotionBody.simulated = true;
+                locomotionBody.GetComponent<BoxCollider2D>().isTrigger = false;
+                locomotionBody.simulated = true;
             }
 
         }

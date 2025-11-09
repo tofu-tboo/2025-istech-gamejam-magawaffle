@@ -132,9 +132,9 @@ public class BodyAnimator : MonoBehaviour
             case "idle":
             case "standing":
             case "wait":
-                StopAllCoroutines();
-                
-                foreach (var partName in new string[] { "Pelvis", "Head", "Torso" })
+                // 고정할 파트는 Kinematic으로 모두 trigger 설정.
+                StopCoroutine(WalkCoroutine());
+                foreach (var partName in new string[] { "Head", "Torso", "Pelvis", "LegLU", "LegRU", "LegLD", "LegRD" })
                 {
                     var part = _lookup[partName];
                     part.body.bodyType = RigidbodyType2D.Kinematic;
@@ -143,22 +143,13 @@ public class BodyAnimator : MonoBehaviour
                     part.body.GetComponent<BoxCollider2D>().isTrigger = true;
                     part.noLerp = false;
                 }
-                foreach (var partName in new string[] { "LegLU", "LegRU", "LegLD", "LegRD" })
-                {
-                    var part = _lookup[partName];
-                    part.body.bodyType = RigidbodyType2D.Dynamic;
-                    SetTargetPose(partName, part.originLocalPosition, part.originLocalRotation);
-                    part.body.GetComponent<BoxCollider2D>().isTrigger = true;
-                    part.noLerp = false;
-                    part.body.gravityScale = 0.0f;
-                }
                 foreach (var partName in new string[] { "ArmLU", "ArmLD", "ArmRU", "ArmRD" })
                 {
                     var part = _lookup[partName];
                     part.body.bodyType = RigidbodyType2D.Dynamic;
+                    part.body.gravityScale = 1.0f;
                     part.body.GetComponent<BoxCollider2D>().isTrigger = true;
                     part.noLerp = true;
-                    part.body.gravityScale = 1.0f;
                 }
                 break;
 
@@ -173,14 +164,23 @@ public class BodyAnimator : MonoBehaviour
                     part.body.gravityScale = 0.0f;
                     part.noLerp = false;
                 }
-                foreach (var partName in new string[] { "ArmLU", "ArmLD", "ArmRU", "ArmRD", "LegLU", "LegLD", "LegRU", "LegRD" })
+                // foreach (var partName in new string[] { "Head", "Torso" })
+                // {
+                //     var part = _lookup[partName];
+                //     part.body.bodyType = RigidbodyType2D.Dynamic;
+                //     part.body.gravityScale = 0.0f;
+                //     part.noLerp = true;
+                // }
+                foreach (var partName in new string[] { "LegLU", "LegRU", "LegLD", "LegRD", "ArmLU", "ArmLD", "ArmRU", "ArmRD" })
                 {
                     var part = _lookup[partName];
                     part.body.bodyType = RigidbodyType2D.Dynamic;
+                    SetTargetPose(partName, part.originLocalPosition, part.originLocalRotation);
                     part.body.gravityScale = 1.0f;
-                    part.noLerp = true;
+                    // part.noLerp = true;
                 }
-                StartCoroutine(WalkCoroutine());
+                // StartCoroutine(WalkCoroutine());
+
                 break;
 
             case "free":
@@ -191,15 +191,8 @@ public class BodyAnimator : MonoBehaviour
                 {
                     part.body.GetComponent<BoxCollider2D>().isTrigger = false;
                     part.body.bodyType = RigidbodyType2D.Dynamic; // freebody
-                    if (part.name == "Pelvis")
-                    {
-                        part.body.gravityScale = 0.0f;
-                    }
-                    else
-                    {
-                        part.body.gravityScale = 1.0f;
-                    }
-                    part.noLerp = true;
+                    part.body.gravityScale = 1.0f;
+                    part.noLerp = false;
                 }
                 break;
             
@@ -247,21 +240,15 @@ public class BodyAnimator : MonoBehaviour
 
         _lerpRoutine = StartCoroutine(LerpToTargets(duration));
     }
-
-    private IEnumerator SwingCoroutine()
-    {
-        while (true)
-        {
-
-            _lookup["Head"].body.AddForce(Vector2.up * 3f);
-            _lookup["Torso"].body.AddForce(Vector2.up * 3f);
-            yield return null;
-        }
-    }
     private IEnumerator WalkCoroutine()
     {
         if (!_lookup.TryGetValue("LegLU", out var legLeft) || legLeft?.body == null ||
             !_lookup.TryGetValue("LegRU", out var legRight) || legRight?.body == null)
+        {
+            yield break;
+        }
+        if (!_lookup.TryGetValue("ArmLU", out var armLeft) || armLeft?.body == null ||
+            !_lookup.TryGetValue("ArmRU", out var armRight) || armRight?.body == null)
         {
             yield break;
         }
@@ -275,6 +262,8 @@ public class BodyAnimator : MonoBehaviour
             float impulse = torqueImpulse * direction;
             legLeft.body.AddTorque(impulse, ForceMode2D.Impulse);
             legRight.body.AddTorque(-impulse, ForceMode2D.Impulse);
+            armLeft.body.AddTorque(-impulse, ForceMode2D.Impulse);
+            armRight.body.AddTorque(impulse, ForceMode2D.Impulse);
 
             direction = -direction;
             yield return wait;
