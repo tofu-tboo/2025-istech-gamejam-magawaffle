@@ -33,8 +33,6 @@ public class Body : MonoBehaviour
 
     [Header("Animation")]
     [SerializeField] private BodyAnimator animator;
-    [SerializeField] private string locomotionStateName = "walk";
-    [SerializeField] private bool autoPlayAnimatorState = false;
 
     [SerializeField] private Rigidbody2D locomotionBody;
     // [SerializeField] private MonoBehaviour[] gameplayBehaviours;
@@ -130,6 +128,25 @@ public class Body : MonoBehaviour
         }
     }
 
+    private void ApplyChildrenDim(float factor)
+    {
+        foreach (Transform childTransform in transform)
+        {
+            // 루프 변수 'childTransform'은 각 자식 오브젝트의 Transform 컴포넌트입니다.
+            GameObject childObject = childTransform.gameObject;
+            
+            // 예: 자식의 이름 출력
+            Debug.Log($"자식 이름: {childObject.name}");
+
+            // 예: 자식에게 특정 스크립트 메서드 호출
+            Dimmed dimmer = childObject.GetComponent<Dimmed>();
+            if (dimmer != null)
+            {
+                dimmer.AdjustBrightness(factor);
+            }
+        }
+    }
+
     public void ApplyState(BodyState nextState, bool force = false) // 이 함수를 통해서 애니메이션 및 Ragdoll 물리가 제어됨
     {
 
@@ -141,6 +158,8 @@ public class Body : MonoBehaviour
                 isPlaying = true;
                 animator?.StartAnimation("idle");
                 isGrounded = false; // 공중 점프 방지
+
+                ApplyChildrenDim(1.0f);
                 break;
             case BodyState.walking:
                 animator?.StartAnimation("walk");
@@ -148,6 +167,7 @@ public class Body : MonoBehaviour
             case BodyState.undead:
                 isPlaying = false;
                 animator?.StartAnimation("free");
+                ApplyChildrenDim(0.8f);
                 break;
             case BodyState.dead:
                 if (_state == BodyState.undead) // 새 Body 요청
@@ -159,6 +179,8 @@ public class Body : MonoBehaviour
                 }
                 isPlaying = false;
                 animator?.StartAnimation("free");
+                ApplyChildrenDim(0.4f);
+
                 break;
             case BodyState.catching:
                 //TODO: catch 로직
@@ -198,8 +220,8 @@ public class Body : MonoBehaviour
                 locomotionBody.linearDamping = ragdollLinearDrag;
                 locomotionBody.angularDamping = ragdollAngularDrag;
 
-                locomotionBody.GetComponent<BoxCollider2D>().isTrigger = true;
-                locomotionBody.simulated = false;
+                // locomotionBody.GetComponent<BoxCollider2D>().isTrigger = true;
+                // locomotionBody.simulated = false;
 
                 // ToggleSystems(false)가 껐던 시뮬레이션을
                 // 래그돌 물리(감지)를 위해 다시 켭니다.
@@ -213,8 +235,8 @@ public class Body : MonoBehaviour
                 locomotionBody.linearVelocity = Vector2.zero;
                 locomotionBody.angularVelocity = 0f;
 
-                locomotionBody.GetComponent<BoxCollider2D>().isTrigger = false;
-                locomotionBody.simulated = true;
+                // locomotionBody.GetComponent<BoxCollider2D>().isTrigger = false;
+                // locomotionBody.simulated = true;
             }
 
         }

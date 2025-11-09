@@ -61,9 +61,30 @@ public class Character : MonoBehaviour
     private int playerLayerIndex;
     private int ghostLayerIndex;
     private int bodyLayerIndex;
-    
+
     private Rigidbody2D bodyRb;
-    private bool isWalking;
+
+    private bool _isWalking = false;
+    private bool isWalking
+    {
+        get => _isWalking;
+        set
+        {
+            if (_isWalking != value) // Toggle
+            {
+                _isWalking = value;
+
+                if (value)
+                {
+                    currentBody.state = BodyState.walking;
+                }
+                else
+                {
+                    currentBody.state = BodyState.idle;
+                }
+            }
+        }
+    }
 
     void Awake()
     {
@@ -91,8 +112,19 @@ public class Character : MonoBehaviour
         
         if (state == CharacterState.moving)
         {
-            if (Input.GetKey(leftKey)) movingDirection += Vector2.left;
-            if (Input.GetKey(rightKey)) movingDirection += Vector2.right;
+            if (!Input.GetKey(leftKey) && !Input.GetKey(rightKey)) // isWalking toggle
+                isWalking = false;
+
+            if (Input.GetKey(leftKey))
+            {
+                movingDirection += Vector2.left;
+                isWalking = true; // isWalking toggle
+            }
+            if (Input.GetKey(rightKey))
+            {
+                movingDirection += Vector2.right;
+                isWalking = true; // isWalking toggle
+            }
 
             if (Input.GetKeyDown(jumpKey) && currentBody != null && currentBody.IsGrounded())
             {

@@ -19,6 +19,8 @@ public class BodyAnimator : MonoBehaviour
         public string name;
         public Rigidbody2D body;
 
+        public bool noLerp = false;
+
         [HideInInspector] public Vector3 originLocalPosition;
         [HideInInspector] public Quaternion originLocalRotation;
         [HideInInspector] public Vector3 targetLocalPosition;
@@ -33,8 +35,6 @@ public class BodyAnimator : MonoBehaviour
                 return;
             }
 
-            Debug.Log("test: " + body.name + " / " + Transform.localPosition);
-
             originLocalPosition = Transform.localPosition;
             originLocalRotation = Transform.localRotation;
             targetLocalPosition = originLocalPosition;
@@ -43,7 +43,7 @@ public class BodyAnimator : MonoBehaviour
     }
 
     [SerializeField] private List<BodyPart> parts = new();
-    [SerializeField] private float defaultDuration = 0.35f;
+    [SerializeField] private float defaultDuration = 0.05f;
     [SerializeField] private AnimationCurve easingCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
 
     private readonly Dictionary<string, BodyPart> _lookup = new(StringComparer.OrdinalIgnoreCase);
@@ -132,23 +132,55 @@ public class BodyAnimator : MonoBehaviour
             case "idle":
             case "standing":
             case "wait":
-                foreach (var partName in new string[] { "Head", "Torso", "Pelvis", "LegLU", "LegRU", "LegLD", "LegRD" })
+                StopAllCoroutines();
+                
+                foreach (var partName in new string[] { "Pelvis", "Head", "Torso" })
                 {
                     var part = _lookup[partName];
                     part.body.bodyType = RigidbodyType2D.Kinematic;
                     SetTargetPose(partName, part.originLocalPosition, part.originLocalRotation);
                     part.body.gravityScale = 0.0f;
-
-                }
-                foreach (var part in parts)
-                {
                     part.body.GetComponent<BoxCollider2D>().isTrigger = true;
+                    part.noLerp = false;
+                }
+                foreach (var partName in new string[] { "LegLU", "LegRU", "LegLD", "LegRD" })
+                {
+                    var part = _lookup[partName];
+                    part.body.bodyType = RigidbodyType2D.Dynamic;
+                    SetTargetPose(partName, part.originLocalPosition, part.originLocalRotation);
+                    part.body.GetComponent<BoxCollider2D>().isTrigger = true;
+                    part.noLerp = false;
+                    part.body.gravityScale = 0.0f;
+                }
+                foreach (var partName in new string[] { "ArmLU", "ArmLD", "ArmRU", "ArmRD" })
+                {
+                    var part = _lookup[partName];
+                    part.body.bodyType = RigidbodyType2D.Dynamic;
+                    part.body.GetComponent<BoxCollider2D>().isTrigger = true;
+                    part.noLerp = true;
+                    part.body.gravityScale = 1.0f;
                 }
                 break;
 
             case "walk":
             case "walking":
             case "walkcycle":
+                foreach (var partName in new string[] { "Pelvis", "Head", "Torso" })
+                {
+                    var part = _lookup[partName];
+                    part.body.bodyType = RigidbodyType2D.Kinematic;
+                    SetTargetPose(partName, part.originLocalPosition, part.originLocalRotation);
+                    part.body.gravityScale = 0.0f;
+                    part.noLerp = false;
+                }
+                foreach (var partName in new string[] { "ArmLU", "ArmLD", "ArmRU", "ArmRD", "LegLU", "LegLD", "LegRU", "LegRD" })
+                {
+                    var part = _lookup[partName];
+                    part.body.bodyType = RigidbodyType2D.Dynamic;
+                    part.body.gravityScale = 1.0f;
+                    part.noLerp = true;
+                }
+                StartCoroutine(WalkCoroutine());
                 break;
 
             case "free":
@@ -159,7 +191,15 @@ public class BodyAnimator : MonoBehaviour
                 {
                     part.body.GetComponent<BoxCollider2D>().isTrigger = false;
                     part.body.bodyType = RigidbodyType2D.Dynamic; // freebody
-                    part.body.gravityScale = 1.0f;
+                    if (part.name == "Pelvis")
+                    {
+                        part.body.gravityScale = 0.0f;
+                    }
+                    else
+                    {
+                        part.body.gravityScale = 1.0f;
+                    }
+                    part.noLerp = true;
                 }
                 break;
             
@@ -208,6 +248,39 @@ public class BodyAnimator : MonoBehaviour
         _lerpRoutine = StartCoroutine(LerpToTargets(duration));
     }
 
+    private IEnumerator SwingCoroutine()
+    {
+        while (true)
+        {
+
+            _lookup["Head"].body.AddForce(Vector2.up * 3f);
+            _lookup["Torso"].body.AddForce(Vector2.up * 3f);
+            yield return null;
+        }
+    }
+    private IEnumerator WalkCoroutine()
+    {
+        if (!_lookup.TryGetValue("LegLU", out var legLeft) || legLeft?.body == null ||
+            !_lookup.TryGetValue("LegRU", out var legRight) || legRight?.body == null)
+        {
+            yield break;
+        }
+
+        const float torqueImpulse = 40f;
+        var wait = new WaitForSeconds(0.2f);
+        float direction = 1f;
+
+        while (true)
+        {
+            float impulse = torqueImpulse * direction;
+            legLeft.body.AddTorque(impulse, ForceMode2D.Impulse);
+            legRight.body.AddTorque(-impulse, ForceMode2D.Impulse);
+
+            direction = -direction;
+            yield return wait;
+        }
+    }
+
     private IEnumerator LerpToTargets(float duration)
     {
         var startPos = new Dictionary<BodyPart, Vector3>(parts.Count);
@@ -232,7 +305,7 @@ public class BodyAnimator : MonoBehaviour
 
             foreach (var part in parts)
             {
-                if (part == null || part.Transform == null || !startPos.ContainsKey(part))
+                if (part == null || part.Transform == null || !startPos.ContainsKey(part) || part.noLerp)
                 {
                     continue;
                 }
@@ -248,10 +321,13 @@ public class BodyAnimator : MonoBehaviour
 
         foreach (var part in parts)
         {
-            if (part == null || part.Transform == null)
+            if (part == null || part.Transform == null || part.noLerp)
             {
                 continue;
             }
+
+            part.body.linearVelocity = Vector2.zero;
+            part.body.angularVelocity = 0;
 
             ApplyLocalPose(part, part.targetLocalPosition, part.targetLocalRotation);
         }
