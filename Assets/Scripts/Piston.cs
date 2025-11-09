@@ -17,7 +17,7 @@ public class Piston : MonoBehaviour
     [Tooltip("플레이어를 감지할 거리 (PressSprite 아래쪽)")]
     [SerializeField] private float detectionRange = 5f;
     [Tooltip("빠르게 떨어지는 속도")]
-    [SerializeField] private float fallSpeed = 10f;
+    [SerializeField] private float fallSpeed = 20f;
     [Tooltip("천천히 올라가는 속도")]
     [SerializeField] private float riseSpeed = 1f;
     [Tooltip("바닥에 닿은 후 멈춰있는 시간")]
@@ -73,6 +73,16 @@ public class Piston : MonoBehaviour
             combinedDetectionMask = playerLayer;
         }
 
+        string layers = "";
+        for (int i = 0; i < 32; i++)
+        {
+            if ((combinedDetectionMask.value & (1 << i)) != 0)
+            {
+                layers += LayerMask.LayerToName(i) + " | ";
+            }
+        }
+        Debug.Log($"[Piston Awake: {gameObject.name}] 감지할 레이어: {layers}");
+
         // Rigidbody를 Kinematic으로 강제 설정
         pressRb.bodyType = RigidbodyType2D.Kinematic;
 
@@ -91,24 +101,29 @@ public class Piston : MonoBehaviour
             Debug.LogWarning("Piston: magneticSpriteRenderer가 할당되지 않았습니다.", this);
         }
     }
-    void Update()
-    {
-        if (CheckForPlayer())
-        {
-            currentState = PistonState.Falling;
-        }
-    }
+    // void Update()
+    // {
+    //     if (CheckForPlayer())
+    //     {
+    //         currentState = PistonState.Falling;
+    //     }
+    // }
     void FixedUpdate()
     {
         if (!isEnabled)
         {
 
-            // [수정] 비활성화 시 Inactive 스프라이트로 고정
+            Debug.LogWarning($"[Piston FixedUpdate: {gameObject.name}] Piston is NOT ENABLED.");
+
             if (magneticSpriteRenderer != null)
             {
                 magneticSpriteRenderer.sprite = inactiveMagneticSprite;
             }
-            // MovePosition을 호출하지 않으면 멈춥니다.
+
+            if (currentState != PistonState.Idle)
+            {
+                GoToRisingState();
+            }
             return;
         }
 
@@ -116,50 +131,63 @@ public class Piston : MonoBehaviour
         switch (currentState)
         {
             case PistonState.Idle:
-                pressCollider.enabled = false; // 대기 중엔 안전
+                pressCollider.enabled = false;
 
-                // [수정] 'inactive' 스프라이트
                 if (magneticSpriteRenderer != null)
                 {
                     magneticSpriteRenderer.sprite = inactiveMagneticSprite;
                 }
+
                 if (CheckForPlayer())
                 {
+                    Debug.Log($"[Piston: {gameObject.name}] PLAYER DETECTED! State -> Falling.");
                     currentState = PistonState.Falling;
                 }
                 break;
 
             case PistonState.Falling:
-                // [핵심 수정] .velocity 대신 .MovePosition() 사용
-                // 1. 현재 위치에서 (아래방향 * 속도 * 시간) 만큼 이동할 '다음 위치' 계산
-                Vector2 newFallPos = pressRb.position + (Vector2.down * fallSpeed * Time.fixedDeltaTime);
-                // 2. 물리 엔진을 통해 '다음 위치'로 이동
-                // 바닥 감지
+                pressCollider.enabled = true;
+
+                // [수정 1] 바닥을 *먼저* 확인합니다.
                 if (CheckForGround())
                 {
-                    // [핵심 수정] MovePosition을 멈추고 상태만 변경
-                    // (velocity = 0 코드가 필요 없어짐)
+                    Debug.Log($"[Piston: {gameObject.name}] GROUND DETECTED! State -> Grounded.");
                     groundedTimer = groundedWaitTime;
                     currentState = PistonState.Grounded;
+
+                    // 바닥에 닿았으므로 여기서 MovePosition을 멈춥니다.
+                    break;
                 }
-                else
-                    pressRb.MovePosition(newFallPos);
 
-                pressCollider.enabled = true; // 낙하 중엔 위험
+                // [수정 1] 바닥에 닿지 않았을 때만 이동합니다.
+                Vector2 newFallPos = pressRb.position + (Vector2.down * fallSpeed * Time.fixedDeltaTime);
+                pressRb.MovePosition(newFallPos);
 
-                // [수정] 'active' 스프라이트
+                // Body 파괴 로직 (BoxCastAll - 저번 턴에 수정한 내용 유지)
+                if (pressCollider.enabled)
+                {
+                    Bounds bounds = pressCollider.bounds;
+                    RaycastHit2D[] hits = Physics2D.BoxCastAll(bounds.center, bounds.size, 0f, Vector2.zero, 0f, combinedDetectionMask);
+
+                    foreach (RaycastHit2D hit in hits)
+                    {
+                        if (hit.collider != null && hit.collider.TryGetComponent<Body>(out Body body))
+                        {
+                            Debug.LogWarning($"[Piston: {gameObject.name}] Falling 중 감지! {body.gameObject.name} (Layer: {LayerMask.LayerToName(body.gameObject.layer)}) 파괴 시도.");
+                            body.HandlePistonCrush();
+                        }
+                    }
+                }
+
                 if (magneticSpriteRenderer != null)
                 {
                     magneticSpriteRenderer.sprite = activeMagneticSprite;
                 }
-
                 break;
 
             case PistonState.Grounded:
-                // MovePosition()을 호출하지 않으므로, 그 자리에 멈춰있습니다.
-                pressCollider.enabled = true; // 바닥에 있을 때도 위험 (깔림)
+                pressCollider.enabled = true;
 
-                // [수정] 'active' 스프라이트
                 if (magneticSpriteRenderer != null)
                 {
                     magneticSpriteRenderer.sprite = activeMagneticSprite;
@@ -168,46 +196,69 @@ public class Piston : MonoBehaviour
                 groundedTimer -= Time.fixedDeltaTime;
                 if (groundedTimer <= 0)
                 {
+                    Debug.Log($"[Piston: {gameObject.name}] Grounded timer finished. State -> Rising.");
                     currentState = PistonState.Rising;
                 }
                 break;
 
             case PistonState.Rising:
-                // [핵심 수정] .velocity 대신 .MovePosition() 사용
-                Vector2 newRisePos = pressRb.position + (Vector2.up * riseSpeed * Time.fixedDeltaTime);
-                pressRb.MovePosition(newRisePos);
-
-                pressCollider.enabled = false; // 올라갈 땐 안전
-
-                // [수정] 'inactive' 스프라이트
-                if (magneticSpriteRenderer != null)
+                // [수정 2] 올라가는 도중 플레이어 감지
+                if (CheckForPlayer())
                 {
-                    magneticSpriteRenderer.sprite = inactiveMagneticSprite;
+                    Debug.Log($"[Piston: {gameObject.name}] PLAYER DETECTED while rising! State -> Falling.");
+                    currentState = PistonState.Falling;
                 }
-
-                // 원래 위치로 복귀했는지 확인
-                if (pressRb.position.y >= originalPosition.y)
+                else
                 {
-                    // [핵심 수정] 정확한 원래 위치로 스냅
-                    pressRb.MovePosition(originalPosition);
-                    currentState = PistonState.Idle;
+                    // 플레이어가 없으면 계속 올라감
+                    GoToRisingState();
                 }
                 break;
         }
     }
+    
+    // [신규] 복귀 로직 함수
+    private void GoToRisingState()
+    {
+        Vector2 newRisePos = pressRb.position + (Vector2.up * riseSpeed * Time.fixedDeltaTime);
+        pressRb.MovePosition(newRisePos);
 
-    // PressSprite 바로 아래에 플레이어가 있는지 확인
+        pressCollider.enabled = false; 
+
+        if (magneticSpriteRenderer != null)
+        {
+            magneticSpriteRenderer.sprite = inactiveMagneticSprite;
+        }
+
+        if (pressRb.position.y >= originalPosition.y)
+        {
+            // [DEBUG]
+            Debug.Log($"[Piston: {gameObject.name}] Reached original position. State -> Idle.");
+            pressRb.MovePosition(originalPosition);
+            currentState = PistonState.Idle;
+        }
+    }
+
+
+  // PressSprite 바로 아래에 플레이어가 있는지 확인
     private bool CheckForPlayer()
     {
         if (pressCollider == null) return false;
 
-        // 콜라이더의 바닥 중앙 지점 계산
         Vector2 rayOrigin = new Vector2(pressCollider.bounds.center.x, pressCollider.bounds.min.y);
+        
+        // [DEBUG] Scene 뷰에 플레이어 감지 레이저 그림 (빨간색)
+        Debug.DrawRay(rayOrigin, Vector2.down * detectionRange, Color.red);
+        
         RaycastHit2D hit = Physics2D.Raycast(rayOrigin, Vector2.down, detectionRange, combinedDetectionMask);
 
-        // Debug.DrawRay(rayOrigin, Vector2.down * detectionRange, Color.red);
-
-        return hit.collider != null;
+        if (hit.collider != null)
+        {
+            // [DEBUG]
+            Debug.Log($"[Piston CheckForPlayer: {gameObject.name}] Raycast HIT: {hit.collider.name} (Layer: {LayerMask.LayerToName(hit.collider.gameObject.layer)})");
+            return true;
+        }
+        return false;
     }
 
     // PressSprite가 바닥에 닿았는지 확인
@@ -230,11 +281,13 @@ public class Piston : MonoBehaviour
             groundLayer
         );
 
-        // 씬(Scene) 뷰에 레이저를 그림
+        // [DEBUG] Scene 뷰에 바닥 감지 레이저 그림 (초록색/빨간색)
         Debug.DrawRay(rayOrigin, Vector2.down * rayDistance, hit.collider != null ? Color.green : Color.red);
 
         if (hit.collider != null)
         {
+            // [DEBUG]
+            Debug.Log($"[Piston CheckForGround: {gameObject.name}] Raycast HIT Ground: {hit.collider.name}");
             return true;
         }
         else
@@ -244,30 +297,24 @@ public class Piston : MonoBehaviour
     }
 
 
-    /// <summary>
-    /// 피스톤(쿵쿵이)의 작동을 완전히 켭니다.
-    /// </summary>
     public void Activate()
     {
         isEnabled = true;
     }
 
-    /// <summary>
-    /// 피스톤(쿵쿵이)의 작동을 완전히 끕니다.
-    /// (안전을 위해 천천히 올라가는 상태로 강제 변경)
-    /// </summary>
     public void Deactivate()
     {
         isEnabled = false;
-        currentState = PistonState.Rising; // 비활성화 시 안전하게 복귀
-    }
-
-    void OnCollisionStay2D(Collision2D collision)
-    {
-        if (collision.gameObject.CompareTag("Body"))
+        // [수정] 비활성화 시 복귀하도록 강제
+        if (currentState != PistonState.Rising && currentState != PistonState.Idle)
         {
-            Destroy(collision.gameObject);
+            currentState = PistonState.Rising; 
         }
     }
 
+    // [수정] Body.cs의 HandlePistonCrush()로 로직이 이동했으므로 이 함수는 삭제
+    // void OnCollisionStay2D(Collision2D collision)
+    // {
+    //    ...
+    // }
 }
