@@ -25,9 +25,17 @@ public class Character : MonoBehaviour
     public KeyCode jumpKey = KeyCode.Space;
     public KeyCode dieKey = KeyCode.Q;     // '빙의 해제/재빙의' (undead, Body를 Body 레이어로 전환)
     public KeyCode killKey = KeyCode.E;    // '육체 버리기' (dead, Body를 Body 레이어로 전환 및 새 Body 스폰 요청)
+    public KeyCode carryKey = KeyCode.K; // 들기
+    public KeyCode throwKey = KeyCode.L; // 던지기
 
     [Header("Game Settings")]
     [SerializeField] private float findrange = 10f;
+    [SerializeField] private float carryRange = 2f;
+    [SerializeField] private Vector2 carryLocalOffset = new Vector2(0f, 1.5f);
+    [SerializeField] private float maxThrowChargeTime = 1.25f;
+    [SerializeField] private float minThrowForce = 10f;
+    [SerializeField] private float maxThrowForce = 35f;
+    [SerializeField] private Vector2 throwForceDirection = new Vector2(1f, 1f);
 
     [Header("Movement Settings")]
     [SerializeField] private MovementType movetype = MovementType.instant;
@@ -62,7 +70,21 @@ public class Character : MonoBehaviour
     private int ghostLayerIndex;
     private int bodyLayerIndex;
 
+    private struct RigidbodyState
+    {
+        public Rigidbody2D body;
+        public RigidbodyType2D bodyType;
+        public bool simulated;
+        public float gravityScale;
+    }
+
     private Rigidbody2D bodyRb;
+    private Body carriedBody;
+    private Rigidbody2D carriedBodyRoot;
+    private readonly List<RigidbodyState> carriedBodyStates = new();
+    private readonly HashSet<int> thrownBodyIds = new();
+    private float throwKeyHoldTime;
+    private float lastFacingDirection = 1f;
 
     private bool _isWalking = false;
     private bool isWalking
@@ -90,19 +112,19 @@ public class Character : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         col = GetComponent<Collider2D>();
-        
+
         // [추가] 시각적 요소 컴포넌트 가져오기
         spriteRenderer = GetComponent<SpriteRenderer>();
         animator = GetComponent<Animator>();
-        
-        col.isTrigger = true; 
-        
+
+        col.isTrigger = true;
+
         DontDestroyOnLoad(gameObject);
-        
+
         playerLayerIndex = LayerMask.NameToLayer("Player");
-        bodyLayerIndex = LayerMask.NameToLayer("Body"); 
+        bodyLayerIndex = LayerMask.NameToLayer("Body");
         ghostLayerIndex = LayerMask.NameToLayer("Ghost");
-        
+
         BecomeGhost();
     }
 
@@ -119,11 +141,13 @@ public class Character : MonoBehaviour
             {
                 movingDirection += Vector2.left;
                 isWalking = true; // isWalking toggle
+                lastFacingDirection = -1f;
             }
             if (Input.GetKey(rightKey))
             {
                 movingDirection += Vector2.right;
                 isWalking = true; // isWalking toggle
+                lastFacingDirection = 1f;
             }
 
             if (Input.GetKeyDown(jumpKey) && currentBody != null && currentBody.IsGrounded())
@@ -136,6 +160,40 @@ public class Character : MonoBehaviour
                 ReleaseBody(); 
             }
             if (Input.GetKeyDown(killKey)) KillCurrentBody();
+
+            if (Input.GetKeyDown(carryKey))
+            {
+                if (carriedBody != null)
+                {
+                    ReleaseCarryingBody();
+                }
+                else
+                {
+                    TryPickUpNearbyBody();
+                }
+            }
+
+            if (carriedBody != null)
+            {
+                if (Input.GetKeyDown(throwKey))
+                {
+                    throwKeyHoldTime = 0f;
+                }
+
+                if (Input.GetKey(throwKey))
+                {
+                    throwKeyHoldTime += Time.deltaTime;
+                }
+
+                if (Input.GetKeyUp(throwKey))
+                {
+                    ThrowCarriedBody();
+                }
+            }
+            else
+            {
+                throwKeyHoldTime = 0f;
+            }
         }
         else if (state == CharacterState.ghost)
         {
@@ -226,6 +284,7 @@ public class Character : MonoBehaviour
     
     public void ReleaseBody()
     {
+        ReleaseCarryingBody();
         if (currentBody != null)
         {
             currentBody.state = BodyState.undead; 
@@ -237,6 +296,7 @@ public class Character : MonoBehaviour
     
     private void KillCurrentBody()
     {
+        ReleaseCarryingBody();
         if (currentBody != null)
         {
             currentBody.state = BodyState.dead; 
@@ -252,6 +312,7 @@ public class Character : MonoBehaviour
     
     private void BecomeGhost()
     {
+        ReleaseCarryingBody();
         state = CharacterState.ghost;
         currentBody = null;
         bodyRb = null;
@@ -401,5 +462,199 @@ public class Character : MonoBehaviour
             Debug.Log("Character(Ghost)가 배양기(Capsule)에서 이탈.");
             currentCapsule = null; // 배양기 위치 정보 삭제
         }
+    }
+
+    private void TryPickUpNearbyBody()
+    {
+        if (currentBody == null || GameManager.Instance == null)
+        {
+            return;
+        }
+
+        List<Body> nearbyBodies = GameManager.Instance.GetOverlapped(currentBody.transform.position, carryRange, true);
+        Body candidate = null;
+        float closestSqrDist = float.MaxValue;
+
+        foreach (var body in nearbyBodies)
+        {
+            if (body == null || body == currentBody || body == carriedBody)
+            {
+                continue;
+            }
+
+            if (thrownBodyIds.Contains(body.GetInstanceID()))
+            {
+                continue;
+            }
+
+            if (body.state != BodyState.undead && body.state != BodyState.dead)
+            {
+                continue;
+            }
+
+            float sqr = (body.transform.position - currentBody.transform.position).sqrMagnitude;
+            if (sqr < closestSqrDist)
+            {
+                closestSqrDist = sqr;
+                candidate = body;
+            }
+        }
+
+        if (candidate == null)
+        {
+            return;
+        }
+
+        carriedBody = candidate;
+        carriedBodyRoot = candidate.Rb != null ? candidate.Rb : candidate.GetComponent<Rigidbody2D>();
+        
+        carriedBodyStates.Clear();
+        var rigidbodies = candidate.GetComponentsInChildren<Rigidbody2D>(true);
+        foreach (var rigid in rigidbodies)
+        {
+            carriedBodyStates.Add(new RigidbodyState
+            {
+                body = rigid,
+                bodyType = rigid.bodyType,
+                simulated = rigid.simulated,
+                gravityScale = rigid.gravityScale
+            });
+
+            rigid.linearVelocity = Vector2.zero;
+            rigid.angularVelocity = 0f;
+            rigid.bodyType = RigidbodyType2D.Kinematic;
+            rigid.simulated = false;
+        }
+
+        bool hasBounds = TryComputeBodyBounds(candidate, out Bounds combinedBounds);
+
+        carriedBodyRoot.simulated = true; // 던져질려면 simulation 되어야 함.
+
+        Transform parent = currentBody != null ? currentBody.transform : transform;
+        carriedBody.transform.SetParent(parent);
+        carriedBody.transform.localRotation = Quaternion.identity;
+
+        Vector3 localPos = carryLocalOffset;
+        if (hasBounds)
+        {
+            localPos += ApplyCarriedBodyOrientation(combinedBounds);
+        }
+
+        carriedBody.transform.localPosition = localPos;
+    }
+
+    private Vector3 ApplyCarriedBodyOrientation(Bounds bounds)
+    {
+        if (carriedBody == null)
+        {
+            return Vector3.zero;
+        }
+
+        bool tallerThanWide = bounds.size.y > bounds.size.x;
+        float rotationSign = UnityEngine.Random.value < 0.5f ? -1f : 1f;
+        float rotationAngle = tallerThanWide ? 90f * rotationSign : 0f;
+        carriedBody.transform.localRotation = Quaternion.Euler(0f, 0f, rotationAngle);
+
+        float horizontalExtent = tallerThanWide ? bounds.extents.y : bounds.extents.x;
+        float margin = 0.35f;
+        float facing = Mathf.Abs(lastFacingDirection) > 0.01f ? lastFacingDirection : rotationSign;
+
+        return new Vector3(facing * (horizontalExtent + margin), 0f, 0f);
+    }
+
+    private bool TryComputeBodyBounds(Body body, out Bounds combinedBounds)
+    {
+        combinedBounds = default;
+        var colliders = body.GetComponentsInChildren<Collider2D>(true);
+        bool initialized = false;
+
+        foreach (var col in colliders)
+        {
+            if (col == null)
+            {
+                continue;
+            }
+
+            if (!initialized)
+            {
+                combinedBounds = col.bounds;
+                initialized = true;
+            }
+            else
+            {
+                combinedBounds.Encapsulate(col.bounds);
+            }
+        }
+
+        return initialized;
+    }
+
+    private void RestoreCarriedBodyPhysics()
+    {
+        foreach (var snapshot in carriedBodyStates)
+        {
+            if (snapshot.body == null)
+            {
+                continue;
+            }
+
+            snapshot.body.bodyType = snapshot.bodyType;
+            snapshot.body.gravityScale = snapshot.gravityScale;
+            snapshot.body.simulated = snapshot.simulated;
+        }
+
+        carriedBodyStates.Clear();
+    }
+
+    private void ReleaseCarryingBody()
+    {
+        if (carriedBody == null)
+        {
+            return;
+        }
+
+        RestoreCarriedBodyPhysics();
+        Transform fallbackParent = transform.parent != null ? transform.parent : null;
+        carriedBody.transform.SetParent(fallbackParent);
+        carriedBodyRoot.simulated = false; // false였던 Body simulated 복구
+        carriedBody = null;
+        carriedBodyRoot = null;
+        throwKeyHoldTime = 0f;
+
+    }
+
+    private void ThrowCarriedBody()
+    {
+        if (carriedBody == null)
+        {
+            return;
+        }
+
+        RestoreCarriedBodyPhysics();
+        carriedBodyRoot.simulated = true; // test
+        carriedBody.transform.SetParent(null);
+
+        Vector2 direction = throwForceDirection;
+        direction.x *= lastFacingDirection;
+        if (direction.sqrMagnitude < Mathf.Epsilon)
+        {
+            direction = new Vector2(lastFacingDirection, 1f);
+        }
+        direction.Normalize();
+
+        float chargePercent = Mathf.Clamp01(throwKeyHoldTime / maxThrowChargeTime);
+        float forceMagnitude = Mathf.Lerp(minThrowForce, maxThrowForce, chargePercent);
+
+        if (carriedBodyRoot != null)
+        {
+            carriedBodyRoot.linearVelocity = Vector2.zero;
+            carriedBodyRoot.angularVelocity = 0f;
+            carriedBodyRoot.AddForce(direction * forceMagnitude, ForceMode2D.Impulse);
+        }
+
+        thrownBodyIds.Add(carriedBody.GetInstanceID());
+        carriedBody = null;
+        carriedBodyRoot = null;
+        throwKeyHoldTime = 0f;
     }
 }
