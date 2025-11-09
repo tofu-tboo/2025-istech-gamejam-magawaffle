@@ -119,7 +119,7 @@ public class GameManager : MonoBehaviour
         // '새 육체 생성' 키 (유령 상태일 때만)
         if (Input.GetKeyDown(resurrectKey) && playerSoul.state == CharacterState.ghost)
         {
-            HandleResurrection();
+            //HandleResurrection();
         }
         if (Input.GetKeyDown(KeyCode.K))
         {
